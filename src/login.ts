@@ -12,14 +12,14 @@ import { TrialPage } from './pages/trial/trial';
 export namespace Login {
   // Get your Firebase app's config on your Firebase console. "Add Firebase to your web app".
   export const firebaseConfig = {
-    apiKey: "AIzaSyA2QrCach2kxQpuwtjzLuP5GkWq2gc_6Xs",
-    authDomain: "fir-v3-auth-social-kit.firebaseapp.com",
-    databaseURL: "https://fir-v3-auth-social-kit.firebaseio.com",
-    storageBucket: "fir-v3-auth-social-kit.appspot.com",
-    messagingSenderId: "86899339460"
+    apiKey: "AIzaSyCL3p6Ixll1JnLrruNowmFHOddy-8TKop0",
+    authDomain: "netvote-160820.firebaseapp.com",
+    databaseURL: "https://netvote-160820.firebaseio.com",
+    storageBucket: "netvote-160820.appspot.com",
+    messagingSenderId: "201280024085"
   };
   // Get your Facebook App Id from your app at http://developers.facebook.com
-  export const facebookAppId: string = "1025234637591184";
+  export const facebookAppId: string = "454672241530891";
   // Get your Google Web Client Id from your Google Project's Credentials at https://console.developers.google.com/apis/credentials
   // Or from your google-services.json under:
   // "oauth_client": [
