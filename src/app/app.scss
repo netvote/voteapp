@@ -1,0 +1,98 @@
+// http://ionicframework.com/docs/v2/theming/
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+
+//Background of the screens
+.scroll-content {
+  background-image: url('../assets/images/background.png');
+  background-position: initial initial;
+  background-repeat: initial initial;
+}
+
+//Add class="no-scroll" on <ion-content> to disable scrolling
+.no-scroll .scroll-content {
+  overflow: hidden;
+}
+
+//Background of sidemenu
+.menu .scroll-content {
+  background-image: url('../assets/images/background-menu.png');
+  background-position: initial initial;
+  background-repeat: initial initial;
+}
+
+//Sidemenu style
+div.profile-menu {
+  text-align: center;
+  background: rgba(0, 0, 0, 0);
+
+  img {
+    width: 95%;
+    margin-top: 0.75em;
+    margin-left: 0.5em;
+    margin-bottom: 0.5em;
+    border-radius: 100%;
+    object-fit: cover;
+  }
+
+  h4,
+  p,
+  span {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-size: 90%;
+  }
+
+  h4 {
+    font-size: 125%;
+    margin-top: 0.6em;
+    margin-left: 0.5em;
+    color: #fff;
+  }
+
+  p {
+    margin-top: 0.1em;
+    margin-left: 0.75em;
+    color: $gray;
+  }
+
+  span {
+    margin-top: 0.25em;
+    margin-left: 0.75em;
+    color: $primary;
+    display: block;
+  }
+
+  span.activated,
+  span:active {
+    color: $primary-active;
+  }
+
+  ion-list {
+    ion-item {
+      background: rgba(0, 0, 0, 0.3) !important;
+      color: #fff !important;
+    }
+
+    ion-item.activated {
+      background: rgba(0, 0, 0, 0.5) !important;
+      color: $primary !important;
+    }
+
+    ion-item.activated ion-icon {
+      color: $primary;
+    }
+  }
+}

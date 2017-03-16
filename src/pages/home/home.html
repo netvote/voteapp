@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons>
+      <button ion-button icon-only tappable (click)="toggleMenu()"><ion-icon name="md-menu"></ion-icon></button>
+    </ion-buttons>
+    <ion-title>Profile</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="user">
+    <div class="profile">
+      <img src="{{user.img}}" tappable (click)="setPhoto()" />
+    </div>
+    <!-- Show icon of logged in provider -->
+    <h4>
+      <span tappable (click)="setName()">{{user.name}} </span>
+      <ion-icon name="md-flame" *ngIf="user.provider == 'Firebase'" class="firebase"></ion-icon>
+      <ion-icon name="logo-facebook" *ngIf="user.provider == 'Facebook'" class="facebook"></ion-icon>
+      <ion-icon name="logo-google" *ngIf="user.provider == 'Google'" class="google"></ion-icon>
+    </h4>
+    <div class="divider"></div>
+    <p tappable (click)="setEmail()">{{user.email}}</p>
+    <!-- Profile Menu -->
+    <ion-list>
+      <ion-item no-lines tappable (click)="setName()">
+        Set Profile Name
+        <ion-icon name="md-contact" item-right></ion-icon>
+      </ion-item>
+      <ion-item no-lines tappable (click)="setPhoto()">
+        Set Profile Photo
+        <ion-icon name="ios-camera" item-right></ion-icon>
+      </ion-item>
+      <ion-item no-lines tappable (click)="setEmail()">
+        Change Email Address
+        <ion-icon name="md-mail-open" item-right></ion-icon>
+      </ion-item>
+      <ion-item no-lines tappable (click)="setPassword()" *ngIf="user && user.provider == 'Firebase'">
+        Change Password
+        <ion-icon name="md-key" item-right></ion-icon>
+      </ion-item>
+      <ion-item no-lines tappable (click)="deleteAccount()">
+        Delete Account
+        <ion-icon name="md-trash" item-right></ion-icon>
+      </ion-item>
+      <ion-item no-lines tappable (click)="logout()">
+        Logout
+        <ion-icon name="md-log-out" item-right></ion-icon>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
