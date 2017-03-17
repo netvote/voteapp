@@ -3,4 +3,4 @@ platforms
 plugins
 node_modules
 .idea
-build
+www/build
