@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Nav, MenuController} from 'ionic-angular';
+import {Platform, Nav, MenuController, AlertController} from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
 
 //Pages
@@ -8,6 +8,7 @@ import { ManageBallotsPage } from '../pages/manage-ballots/manage-ballots'
 import { HomePage } from '../pages/home/home';
 import { AngularFire } from 'angularfire2';
 import * as firebase from 'firebase';
+import {LogoutProvider} from "../providers/logout";
 
 @Component({
   templateUrl: 'app.html'
@@ -18,7 +19,7 @@ export class MyApp {
   private pages: Array<{ title: string, icon: string, component: any }>
   private user: any;
 
-  constructor(platform: Platform, public angularfire: AngularFire, public menuCtrl: MenuController) {
+  constructor(platform: Platform, public angularfire: AngularFire, public menuCtrl: MenuController, public alertCtrl: AlertController, public logoutProvider: LogoutProvider) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -55,4 +56,21 @@ export class MyApp {
   openPage(page) {
     this.nav.setRoot(page.component);
   }
+
+  logout() {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Logout',
+          handler: data => { this.logoutProvider.logout(); }
+        }
+      ]
+    }).present();
+  }
+
 }

@@ -1,13 +1,54 @@
 <ion-header>
   <ion-navbar>
-    <ion-buttons>
+    <ion-buttons left>
       <button ion-button icon-only tappable (click)="toggleMenu()"><ion-icon name="md-menu"></ion-icon></button>
     </ion-buttons>
     <ion-title>Manage Ballots</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only tappable (click)="addBallot()"><ion-icon name="add"></ion-icon></button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
+  <ion-card [hidden]="loading || ballots.length > 0">
+    <ion-card-header>
+      You have no ballots.
+    </ion-card-header>
+  </ion-card>
 
+  <ion-card *ngFor="let ballot of ballots" [hidden]="loading || ballots.length == 0">
+    <ion-card-content>
+      <img src="{{ ballot.val.Ballot.Attributes.Image }}" [hidden]="ballot.val.Ballot.Attributes.Image == null || ballot.val.Ballot.Attributes.Image == ''"/>
+
+      <ion-card-title>
+        {{ ballot.val.Ballot.Name }}
+      </ion-card-title>
+      <p>
+        {{ ballot.val.Ballot.Description }}
+      </p>
+    </ion-card-content>
+    <ion-row no-padding>
+      <ion-col>
+        <button ion-button clear small icon-left>
+          <ion-icon color="primary" name='build'></ion-icon>
+          Edit
+        </button>
+      </ion-col>
+      <ion-col text-center>
+        <button ion-button clear small icon-left>
+          <ion-icon color="primary" name='stats'></ion-icon>
+          Results
+        </button>
+      </ion-col>
+      <ion-col text-center>
+        <button (click)="openMore(ballot.key)" ion-button clear small icon-left>
+          <ion-icon color="primary" name='more'></ion-icon>
+          More
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+  
 </ion-content>
