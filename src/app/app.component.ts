@@ -4,6 +4,7 @@ import { StatusBar, Splashscreen } from 'ionic-native';
 
 //Pages
 import { LoginPage } from '../pages/login/login';
+import { ManageBallotsPage } from '../pages/manage-ballots/manage-ballots'
 import { HomePage } from '../pages/home/home';
 import { AngularFire } from 'angularfire2';
 import * as firebase from 'firebase';
@@ -27,7 +28,7 @@ export class MyApp {
 
     // Set your sidemenu pages here.
     this.pages = [
-      { title: 'Home', icon: 'md-home', component: HomePage }
+      { title: 'Manage Ballots', icon: 'color-wand', component: ManageBallotsPage}
     ];
 
     // Check if user is logged in and authenticated on Firebase.
@@ -45,6 +46,11 @@ export class MyApp {
   toggleMenu() {
     this.menuCtrl.toggle();
   }
+
+  openProfile() {
+    this.nav.setRoot(HomePage)
+  }
+
   // Open page.
   openPage(page) {
     this.nav.setRoot(page.component);

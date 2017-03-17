@@ -13,6 +13,7 @@ import { ImageProvider } from '../providers/image';
 import * as firebase from 'firebase';
 import { AngularFireModule, AuthMethods, AuthProviders } from 'angularfire2';
 import { Login } from '../login';
+import {ManageBallotsPage} from "../pages/manage-ballots/manage-ballots";
 
 firebase.initializeApp(Login.firebaseConfig);
 
@@ -22,7 +23,8 @@ firebase.initializeApp(Login.firebaseConfig);
     LoginPage,
     HomePage,
     VerificationPage,
-    TrialPage
+    TrialPage,
+    ManageBallotsPage
   ],
   imports: [
     IonicModule.forRoot(MyApp, {
@@ -36,7 +38,8 @@ firebase.initializeApp(Login.firebaseConfig);
     LoginPage,
     HomePage,
     VerificationPage,
-    TrialPage
+    TrialPage,
+    ManageBallotsPage
   ],
   providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler }, LoginProvider, LogoutProvider, LoadingProvider, AlertProvider, ImageProvider]
 })

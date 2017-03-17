@@ -7,14 +7,14 @@
   <!-- Sidemenu -->
   <ion-content class="menu">
     <div class="profile-menu" *ngIf="user">
-      <ion-row tappable (click)="openPage(pages[0])">
+      <ion-row tappable (click)="openProfile()">
         <ion-col width-25>
           <img src="{{user.img}}"/>
         </ion-col>
         <ion-col width-75>
             <h4>{{user.name}}</h4>
             <p>{{user.email}}</p>
-            <span tappable (click)="openPage(pages[0]); $event.stopPropagation();">Manage Profile</span>
+            <span tappable (click)="openProfile(); $event.stopPropagation();">Manage Profile</span>
         </ion-col>
       </ion-row>
       <ion-list>
