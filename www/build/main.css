@@ -25739,6 +25739,68 @@ page-login div .bottom .form button.clear.activated {
   color: #ffca28;
 }
 
+page-manage-ballots h4,
+page-manage-ballots p {
+  text-align: center;
+}
+
+page-manage-ballots h4 {
+  margin: 0;
+  padding: 0 0 0.75em;
+  color: #fff;
+}
+
+page-manage-ballots p {
+  color: #c3c3c3;
+}
+
+page-manage-ballots h4 span.activated,
+page-manage-ballots p.activated {
+  opacity: 0.5;
+}
+
+page-manage-ballots .divider {
+  width: 12vw;
+  border-bottom: solid 0.2em #ffca28;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+page-manage-ballots ion-icon {
+  color: #fff;
+  font-size: 1.4em;
+}
+
+page-manage-ballots ion-icon.facebook {
+  color: #3052a8;
+}
+
+page-manage-ballots ion-icon.google {
+  color: #dd4b39;
+}
+
+page-manage-ballots ion-icon.firebase {
+  color: #ffca28;
+}
+
+page-manage-ballots ion-list {
+  margin-top: 1.125em !important;
+}
+
+page-manage-ballots ion-list ion-item {
+  background: rgba(0, 0, 0, 0.3) !important;
+  color: #fff !important;
+}
+
+page-manage-ballots ion-list ion-item.activated {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: #ffca28 !important;
+}
+
+page-manage-ballots ion-list ion-item.activated ion-icon {
+  color: #ffca28;
+}
+
 page-trial .profile {
   position: relative;
   overflow: hidden;
