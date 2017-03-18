@@ -82,9 +82,7 @@ export class LoginProvider {
   // enabled Google Login and have whitelisted CLIENT_ID's value on Firebase console.
   googleLogin() {
     this.loadingProvider.show();
-    GooglePlus.login({
-      'webClientId': Login.googleClientId
-    }).then((success) => {
+    GooglePlus.login({}).then((success) => {
       let credential = firebase.auth.GoogleAuthProvider.credential(success['idToken'], null);
       firebase.auth().signInWithCredential(credential)
         .then((success) => {
