@@ -58,7 +58,7 @@ export class MyApp {
   }
 
   logout() {
-    let alert = this.alertCtrl.create({
+    this.alertCtrl.create({
       title: 'Confirm Logout',
       message: 'Are you sure you want to logout?',
       buttons: [
