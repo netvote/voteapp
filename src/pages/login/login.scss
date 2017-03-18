@@ -56,23 +56,6 @@ page-login {
         background: $google-active;
       }
 
-      button.secondary {
-        background: $secondary;
-      }
-
-      button.secondary.activated,
-      button.secondary:active {
-        background: $secondary-active;
-      }
-
-      button.dark {
-        background: $dark;
-      }
-
-      button.dark.activated,
-      button.dark:active {
-        background: $dark-active;
-      }
 
       .form {
         background: rgba(0, 0, 0, 0.3);

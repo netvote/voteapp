@@ -63,7 +63,7 @@ export class HomePage {
             name = user.displayName;
             name = providerData.displayName;
           } else {
-            name = "Firebase User";
+            name = "Netvote User";
           }
 
           // Get provider from Firebase user.

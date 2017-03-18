@@ -62,7 +62,7 @@ export class ManageBallotsPage {
     ballotsRef.on('child_removed', (b) => {
       for(let i=0; i<this.ballots.length; i++){
         if(this.ballots[i].key == b.key){
-          this.ballots.splice( i, 1 )
+          this.ballots = this.ballots.splice( i, 1 );
           return;
         }
       }

@@ -12,11 +12,8 @@
 
 
 <ion-content padding>
-  <ion-card [hidden]="loading || ballots.length > 0">
-    <ion-card-header>
-      You have no ballots.
-    </ion-card-header>
-  </ion-card>
+
+  <button [hidden]="loading || ballots.length > 0" ion-button block icon-left tappable class="dark" (click)="addBallot()"><ion-icon name="add"></ion-icon>Add ballot</button>
 
   <ion-card *ngFor="let ballot of ballots" [hidden]="loading || ballots.length == 0">
     <ion-card-content>

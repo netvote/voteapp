@@ -31,6 +31,9 @@ $colors: (
   dark:       #222
 );
 
+
+
+
 // Color Variables
 $primary: #47A2F1;
 $primary-active: #64b7ff;
@@ -43,6 +46,26 @@ $facebook: #3052a8;
 $facebook-active: #345cc0;
 $google: #dd4b39;
 $google-active: #ff563f;
+
+
+button.secondary {
+  background: $secondary;
+}
+
+button.secondary.activated,
+button.secondary:active {
+  background: $secondary-active;
+}
+
+button.dark {
+  background: $dark;
+}
+
+button.dark.activated,
+button.dark:active {
+  background: $dark-active;
+}
+
 
 // Set header bar color to our primary color
 $toolbar-background: $primary;
