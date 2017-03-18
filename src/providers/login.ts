@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-//import { Facebook } from 'ng2-cordova-oauth/core';
 import { OauthCordova } from 'ng2-cordova-oauth/platform/cordova';
 import * as firebase from 'firebase';
 import { Login } from '../login';
@@ -79,6 +78,71 @@ export class LoginProvider {
   }
 */
 
+  private createUserData(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      firebase.database().ref('accounts/' + firebase.auth().currentUser.uid).once('value')
+          .then((account) => {
+            // No database data yet, create user data on database
+            if (account.val()) {
+              resolve(account.val())
+            }
+            else {
+              this.loadingProvider.show();
+              let user = firebase.auth().currentUser;
+              let userId, name, provider, img, email;
+              let providerData = user.providerData[0];
+
+              console.log("creating: " + JSON.stringify(providerData));
+
+              userId = user.uid;
+
+              // Get name from Firebase user.
+              if (user.displayName || providerData.displayName) {
+                name = user.displayName;
+                name = name || providerData.displayName;
+              } else {
+                name = "Netvote User";
+              }
+
+              // Get provider from Firebase user.
+              if (providerData.providerId == 'password') {
+                provider = "Firebase";
+              } else if (providerData.providerId == 'facebook.com') {
+                provider = "Facebook";
+              } else if (providerData.providerId == 'google.com') {
+                provider = "Google";
+              }
+
+              // Get photoURL from Firebase user.
+              if (user.photoURL || providerData.photoURL) {
+                img = user.photoURL;
+                img = img || providerData.photoURL;
+              } else {
+                img = "assets/images/profile.png";
+              }
+
+              // Get email from Firebase user.
+              email = user.email;
+
+              let acctObj = {
+                userId: userId,
+                name: name,
+                provider: provider,
+                img: img,
+                email: email,
+                dateCreated: new Date().toString()
+              };
+
+              // Insert data on our database using AngularFire.
+              firebase.database().ref('/accounts/' + userId).set(acctObj).then(() => {
+                resolve(acctObj);
+                this.loadingProvider.hide();
+              });
+            }
+          });
+    });
+  }
+
   // Facebook Login, after successful authentication, triggers firebase.auth().onAuthStateChanged((user) on top and
   // redirects the user to its respective views. Make sure to set your FacebookAppId on login.ts
   // and enabled Facebook Login on Firebase app authentication console.
@@ -89,6 +153,9 @@ export class LoginProvider {
       this.loadingProvider.show();
       firebase.auth().signInWithCredential(credential)
           .then((success) => {
+            return this.createUserData()
+          })
+          .then((account) => {
             this.loadingProvider.hide();
           })
           .catch((error) => {
@@ -123,9 +190,12 @@ export class LoginProvider {
     GooglePlus.login({}).then((success) => {
       let credential = firebase.auth.GoogleAuthProvider.credential(success['idToken'], null);
       firebase.auth().signInWithCredential(credential)
-        .then((success) => {
-          this.loadingProvider.hide();
-        })
+          .then((success) => {
+            return this.createUserData()
+          })
+          .then((account) => {
+            this.loadingProvider.hide();
+          })
         .catch((error) => {
           this.loadingProvider.hide();
           let code = error["code"];
@@ -153,9 +223,12 @@ export class LoginProvider {
   emailLogin(email, password) {
     this.loadingProvider.show();
     firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((success) => {
-        this.loadingProvider.hide();
-      })
+        .then((success) => {
+          return this.createUserData()
+        })
+        .then((account) => {
+          this.loadingProvider.hide();
+        })
       .catch((error) => {
         this.loadingProvider.hide();
         let code = error["code"];
@@ -167,9 +240,12 @@ export class LoginProvider {
   register(email, password) {
     this.loadingProvider.show();
     firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then((success) => {
-        this.loadingProvider.hide();
-      })
+        .then((success) => {
+          return this.createUserData()
+        })
+        .then((account) => {
+          this.loadingProvider.hide();
+        })
       .catch((error) => {
         this.loadingProvider.hide();
         let code = error["code"];

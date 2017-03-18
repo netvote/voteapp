@@ -72,9 +72,9 @@ export class VerificationPage {
     // Retrieve name from Firebase user
     if (user.displayName || providerData.displayName) {
       name = user.displayName;
-      name = providerData.displayName;
+      name = name || providerData.displayName;
     } else {
-      name = "Firebase User";
+      name = "Netvote User";
     }
 
     // Retrieve provider from Firebase user
@@ -89,7 +89,7 @@ export class VerificationPage {
     // Retrieve photoURL from Firebase user
     if (user.photoURL || providerData.photoURL) {
       img = user.photoURL;
-      img = providerData.photoURL;
+      img = img || providerData.photoURL;
     } else {
       img = "assets/images/profile.png";
     }

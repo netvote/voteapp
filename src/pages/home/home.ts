@@ -38,67 +38,10 @@ export class HomePage {
       this.loadingProvider.hide();
     });
     // Create userData on the database if it doesn't exist yet.
-    this.createUserData();
     // Enable sidemenu on this page.
     this.menuCtrl.enable(true);
     this.menuCtrl.swipeEnable(true);
     this.menuCtrl.close();
-  }
-
-  // Create userData on the database if it doesn't exist yet.
-  createUserData() {
-    firebase.database().ref('accounts/' + firebase.auth().currentUser.uid).once('value')
-      .then((account) => {
-        // No database data yet, create user data on database
-        if (!account.val()) {
-          this.loadingProvider.show();
-          let user = firebase.auth().currentUser;
-          var userId, name, provider, img, email;
-          let providerData = user.providerData[0];
-
-          userId = user.uid;
-
-          // Get name from Firebase user.
-          if (user.displayName || providerData.displayName) {
-            name = user.displayName;
-            name = providerData.displayName;
-          } else {
-            name = "Netvote User";
-          }
-
-          // Get provider from Firebase user.
-          if (providerData.providerId == 'password') {
-            provider = "Firebase";
-          } else if (providerData.providerId == 'facebook.com') {
-            provider = "Facebook";
-          } else if (providerData.providerId == 'google.com') {
-            provider = "Google";
-          }
-
-          // Get photoURL from Firebase user.
-          if (user.photoURL || providerData.photoURL) {
-            img = user.photoURL;
-            img = providerData.photoURL;
-          } else {
-            img = "assets/images/profile.png";
-          }
-
-          // Get email from Firebase user.
-          email = user.email;
-
-          // Insert data on our database using AngularFire.
-          this.angularfire.database.object('/accounts/' + userId).set({
-            userId: userId,
-            name: name,
-            provider: provider,
-            img: img,
-            email: email,
-            dateCreated: new Date().toString()
-          }).then(() => {
-            this.loadingProvider.hide();
-          });
-        }
-      });
   }
 
   // Change user's profile photo. Uses imageProvider to process image and upload on Firebase and update userData.
