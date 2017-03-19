@@ -5,6 +5,11 @@ page-home {
     height: 24vh;
     margin-bottom: -0.625em;
 
+    ion-icon{
+      font-size: 120px;
+      margin: auto;
+      object-fit: cover;
+    }
     img {
       width: 28vw;
       height: 28vw;

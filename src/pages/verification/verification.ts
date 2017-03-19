@@ -71,7 +71,7 @@ export class VerificationPage {
     userId = user.uid;
 
     name = user.displayName || providerData.displayName || "Netvote User";
-    img = user.photoURL || providerData.photoURL || "assets/images/profile.png";
+    img = user.photoURL || providerData.photoURL;
     provider = LoginProvider.toProviderName(providerData.providerId);
     email = user.email;
 

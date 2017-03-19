@@ -9,8 +9,11 @@
 
 <ion-content>
   <div *ngIf="user">
-    <div class="profile">
+    <div *ngIf="user.img" class="profile">
       <img src="{{user.img}}" tappable (click)="setPhoto()" />
+    </div>
+    <div *ngIf="!user.img" class="profile">
+      <button style="height: 180px" ion-button clear block tappable (click)="setPhoto()"><ion-icon color="primary" name="contact"></ion-icon></button>
     </div>
     <!-- Show icon of logged in provider -->
     <h4>
