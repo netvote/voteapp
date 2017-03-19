@@ -17,13 +17,13 @@
 
   <ion-card *ngFor="let ballot of ballots" [hidden]="loading || ballots.length == 0">
     <ion-card-content>
-      <img src="{{ ballot.val.Ballot.Attributes.Image }}" [hidden]="ballot.val.Ballot.Attributes.Image == null || ballot.val.Ballot.Attributes.Image == ''"/>
+      <img src="{{ ballot.val.config.Ballot.Attributes.Image }}" [hidden]="ballot.val.config.Ballot.Attributes.Image == null || ballot.val.config.Ballot.Attributes.Image == ''"/>
 
       <ion-card-title>
-        {{ ballot.val.Ballot.Name }}
+        {{ ballot.val.config.Ballot.Name }}
       </ion-card-title>
       <p>
-        {{ ballot.val.Ballot.Description }}
+        {{ ballot.val.config.Ballot.Description }}
       </p>
     </ion-card-content>
     <ion-row no-padding>

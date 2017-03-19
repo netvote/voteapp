@@ -62,7 +62,7 @@ export class ManageBallotsPage {
     ballotsRef.on('child_removed', (b) => {
       for(let i=0; i<this.ballots.length; i++){
         if(this.ballots[i].key == b.key){
-          this.ballots = this.ballots.splice( i, 1 );
+          this.ballots.splice( i, 1 );
           return;
         }
       }
@@ -82,17 +82,17 @@ export class ManageBallotsPage {
         {
           text: 'One-Time',
           handler: () => {
-            this.createBallot(this.getMockBallot(false))
+            this.saveBallot(this.getMockBallot(false))
           }
         },{
           text: 'One-Time 2FA',
           handler: () => {
-            this.createBallot(this.getMockBallot(true))
+            this.saveBallot(this.getMockBallot(true))
           }
         },{
           text: 'Repeatable',
           handler: () => {
-            this.createBallot(this.getMockRepeatableBallot())
+            this.saveBallot(this.getMockRepeatableBallot())
           }
         },{
           text: 'Cancel',
@@ -104,20 +104,32 @@ export class ManageBallotsPage {
     actionSheet.present();
   }
 
-  private createBallot(ballot){
+  private saveBallot(ballot){
 
     let ballotsRef = firebase.database().ref('/ballot-config-lists/' + this.userId);
     let newRef = ballotsRef.push();
 
-    newRef.set(ballot)
+    let updates = {};
+    updates['/ballot-configs/'+newRef.key] = {
+      status: "pending",
+      owner: firebase.auth().currentUser.uid,
+      config: ballot
+    };
+    updates['/ballot-config-lists/' + this.userId+'/'+newRef.key] = {
+      status: "pending",
+      config: ballot
+    };
+
+    return firebase.database().ref().update(updates);
 
   }
 
   private deleteBallot(ballotKey){
     let ballotsRef = firebase.database().ref('/ballot-config-lists/' + this.userId + '/' + ballotKey);
-    ballotsRef.remove((r) => {
-      
-    })
+    ballotsRef.remove((r) => {});
+
+    let ballotRef = firebase.database().ref('/ballot-configs/' + ballotKey);
+    ballotRef.remove((r) => {});
   }
 
   private shareBallot(shareBallot){
