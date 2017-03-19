@@ -18,10 +18,6 @@ export class LoginProvider {
   // In the constructor of the controller that uses this provider, call setNavController(navCtrl).
   private oauth: OauthCordova;
   private navCtrl: NavController;
-  /*private facebookProvider = new Facebook({
-    clientId: Login.facebookAppId,
-    appScope: ["email"]
-  });*/
 
   constructor(public loadingProvider: LoadingProvider, public alertProvider: AlertProvider) {
     console.log("Initializing Login Provider");
@@ -29,12 +25,14 @@ export class LoginProvider {
     // Detect changes on the Firebase user and redirects the view depending on the user's status.
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+          let providerId = user.providerData[0];
+
         if (user["isAnonymous"]) {
           //Goto Trial Page.
           this.navCtrl.setRoot(Login.trialPage);
         } else {
           if (Login.emailVerification) {
-            if (user["emailVerified"]) {
+            if (providerId != 'password' || (providerId == 'password' && user["emailVerified"])) {
               //Goto Home Page.
               this.navCtrl.setRoot(Login.homePage);
             } else {
@@ -56,27 +54,6 @@ export class LoginProvider {
   setNavController(navCtrl) {
     this.navCtrl = navCtrl;
   }
-
-/*
-  private getFacebookToken(): Promise<string>{
-
-    return new Promise((resolve, reject) => {
-      let fbLoginSuccess = function (userData) {
-        console.log("UserInfo: ", userData);
-        facebookConnectPlugin.getAccessToken(function(token) {
-          resolve(token)
-        });
-      };
-
-      facebookConnectPlugin.login(["public_profile"], fbLoginSuccess,
-          function (error) {
-            console.error("error during login: ");
-            reject(error)
-          }
-      );
-    });
-  }
-*/
 
   private createUserData(): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -165,23 +142,7 @@ export class LoginProvider {
           });
     });
   }
-/*
-  oldfacebookLogin() {
-    this.oauth.logInVia(this.facebookProvider).then(success => {
-      let credential = firebase.auth.FacebookAuthProvider.credential(success['access_token']);
-      this.loadingProvider.show();
-      firebase.auth().signInWithCredential(credential)
-        .then((success) => {
-          this.loadingProvider.hide();
-        })
-        .catch((error) => {
-          this.loadingProvider.hide();
-          let code = error["code"];
-          this.alertProvider.showErrorMessage(code);
-        });
-    }, error => { });
-  }
-*/
+
   // Google Login, after successful authentication, triggers firebase.auth().onAuthStateChanged((user) on top and
   // redirects the user to its respective views. Make sure there's a REVERSED_CLIENT_ID set on your config.xml and
   // enabled Google Login and have whitelisted CLIENT_ID's value on Firebase console.
