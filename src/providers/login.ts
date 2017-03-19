@@ -72,34 +72,10 @@ export class LoginProvider {
               console.log("creating: " + JSON.stringify(providerData));
 
               userId = user.uid;
-
-              // Get name from Firebase user.
-              if (user.displayName || providerData.displayName) {
-                name = user.displayName;
-                name = name || providerData.displayName;
-              } else {
-                name = "Netvote User";
-              }
-
-              // Get provider from Firebase user.
-              if (providerData.providerId == 'password') {
-                provider = "Firebase";
-              } else if (providerData.providerId == 'facebook.com') {
-                provider = "Facebook";
-              } else if (providerData.providerId == 'google.com') {
-                provider = "Google";
-              }
-
-              // Get photoURL from Firebase user.
-              if (user.photoURL || providerData.photoURL) {
-                img = user.photoURL;
-                img = img || providerData.photoURL;
-              } else {
-                img = "assets/images/profile.png";
-              }
-
-              // Get email from Firebase user.
               email = user.email;
+              name = user.displayName || providerData.displayName || "Netvote User";
+              img = user.photoURL || providerData.photoURL || "assets/images/profile.png";
+              provider = LoginProvider.toProviderName(providerData.providerId);
 
               let acctObj = {
                 userId: userId,
@@ -118,6 +94,16 @@ export class LoginProvider {
             }
           });
     });
+  }
+
+  static toProviderName(providerId){
+      if (providerId == 'facebook.com') {
+          return "Facebook";
+      } else if (providerId == 'google.com') {
+          return "Google";
+      }else{
+          return "Netvote";
+      }
   }
 
   // Facebook Login, after successful authentication, triggers firebase.auth().onAuthStateChanged((user) on top and

@@ -6,6 +6,7 @@ import { AlertProvider } from '../../providers/alert';
 import { AngularFire } from 'angularfire2';
 import { Validator } from '../../validator';
 import * as firebase from 'firebase';
+import {LoginProvider} from "../../providers/login";
 
 @Component({
   selector: 'page-verification',
@@ -64,37 +65,14 @@ export class VerificationPage {
   // Get user data from the logged in Firebase user to show on html markup.
   getUserData() {
     let user = firebase.auth().currentUser;
-    var userId, name, provider, img, email;
+    let userId, name, provider, img, email;
     let providerData = user.providerData[0];
 
     userId = user.uid;
 
-    // Retrieve name from Firebase user
-    if (user.displayName || providerData.displayName) {
-      name = user.displayName;
-      name = name || providerData.displayName;
-    } else {
-      name = "Netvote User";
-    }
-
-    // Retrieve provider from Firebase user
-    if (providerData.providerId == 'password') {
-      provider = "Firebase";
-    } else if (providerData.providerId == 'facebook.com') {
-      provider = "Facebook";
-    } else if (providerData.providerId == 'google.com') {
-      provider = "Google";
-    }
-
-    // Retrieve photoURL from Firebase user
-    if (user.photoURL || providerData.photoURL) {
-      img = user.photoURL;
-      img = img || providerData.photoURL;
-    } else {
-      img = "assets/images/profile.png";
-    }
-
-    // Retrieve email from Firebase user
+    name = user.displayName || providerData.displayName || "Netvote User";
+    img = user.photoURL || providerData.photoURL || "assets/images/profile.png";
+    provider = LoginProvider.toProviderName(providerData.providerId);
     email = user.email;
 
     // Set to user variable for our markup html
