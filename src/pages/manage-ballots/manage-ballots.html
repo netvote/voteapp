@@ -41,7 +41,7 @@
 
       </p>
     </ion-card-content>
-    <ion-row no-padding [hidden]="false && ballot.val.status == 'pending'">
+    <ion-row no-padding [hidden]="isSyncing(ballot.key)">
       <ion-col>
         <button ion-button clear small icon-left>
           <ion-icon color="primary" name='build'></ion-icon>

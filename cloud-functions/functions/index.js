@@ -42,7 +42,16 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
                     payload: payload
                 });
 
-               return createBallot(payload);
+               return createBallot(payload).then((fabricBallot)=>{
+                    let fabricId = fabricBallot.Id;
+                    let configIdPath = '/ballot-configs/'+ballotId+"/config/Ballot/Id";
+                    let configListIdPath = '/ballot-config-lists/'+evtPayload.owner+'/'+ballotId+'/config/Ballot/Id';
+
+                    let updates = {};
+                    updates[configIdPath] = fabricId;
+                    updates[configListIdPath] = fabricId;
+                    return firebase.database().ref().update(updates);
+               });
                 // invoke remote API
                 // get results and update firebase (Ids)
             }
@@ -61,17 +70,15 @@ exports.commitBallot = functions.database.ref('/fabric-tx/ballot/{userId}/{ballo
             let ballotId = event.params.ballotId;
             let userId = event.params.userId;
 
-            let updates = {};
-
-            updates['/ballot-configs/'+ballotId] = {status: evtPayload.status};
-            updates['/ballot-config-lists/'+userId+'/'+ballotId] = {status: evtPayload.status};
-
-            firebase.database().ref('/ballot-configs/'+ballotId).update({status: evtPayload.status})
-                .then(()=> {
-                    firebase.database().ref('/ballot-config-lists/'+userId+'/'+ballotId).update({status: evtPayload.status})
-                }).then(()=>{
-                event.data.ref.remove((r) => {})
-            });
+            if(evtPayload != null) {
+                firebase.database().ref('/ballot-configs/' + ballotId).update({status: evtPayload.status})
+                    .then(() => {
+                        firebase.database().ref('/ballot-config-lists/' + userId + '/' + ballotId).update({status: evtPayload.status})
+                    }).then(() => {
+                    event.data.ref.remove((r) => {
+                    })
+                });
+            }
         }
     });
 
@@ -98,7 +105,7 @@ function createBallot(payload){
             });
 
             res.on('end', function(){
-                console.log("fabric response: "+body)
+                console.log("fabric response: "+body);
                 try{
                     resolve(JSON.parse(body));
                 }catch(e){
