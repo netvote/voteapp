@@ -1,11 +1,14 @@
 let functions = require('firebase-functions');
 const admin = require('firebase-admin');
 let firebase = admin.initializeApp(functions.config().firebase);
+let FABRIC_API="104.154.202.247";
+let http = require('http');
+
+
 
 exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
         .onWrite(event => {
             // Exit when the data is deleted.
-
 
             console.log('event: ', JSON.stringify(event));
 
@@ -22,13 +25,15 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
                 //TODO: CREATE
 
                 let ballotId = event.params.ballotId;
+                let callbackRef = "/fabric-tx/ballot/"+evtPayload.owner+"/"+ballotId;
+
                 let payload = {
                     userId: evtPayload.owner,
                     firebaseId: ballotId,
-                    ballot: evtPayload.config
+                    ballot: evtPayload.config,
+                    callbackRef: callbackRef
                 };
 
-                let callbackRef = "/fabric-tx/ballot/"+evtPayload.owner+"/"+ballotId;
                 firebase.database().ref(callbackRef).set({
                     status: "pending",
                     callbackRef: callbackRef,
@@ -37,7 +42,7 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
                     payload: payload
                 });
 
-                return createBallot(payload);
+               return createBallot(payload);
                 // invoke remote API
                 // get results and update firebase (Ids)
             }
@@ -61,7 +66,10 @@ exports.commitBallot = functions.database.ref('/fabric-tx/ballot/{userId}/{ballo
             updates['/ballot-configs/'+ballotId] = {status: evtPayload.status};
             updates['/ballot-config-lists/'+userId+'/'+ballotId] = {status: evtPayload.status};
 
-            return firebase.database().ref().update(updates).then(()=>{
+            firebase.database().ref('/ballot-configs/'+ballotId).update({status: evtPayload.status})
+                .then(()=> {
+                    firebase.database().ref('/ballot-config-lists/'+userId+'/'+ballotId).update({status: evtPayload.status})
+                }).then(()=>{
                 event.data.ref.remove((r) => {})
             });
         }
@@ -71,6 +79,41 @@ exports.commitBallot = functions.database.ref('/fabric-tx/ballot/{userId}/{ballo
 function createBallot(payload){
     return new Promise((resolve, reject) => {
         console.log("BALLOT CREATE: ", JSON.stringify(payload));
-        resolve("success");
+
+        let options = {
+            hostname: FABRIC_API,
+            path: "/api/v1/ballot",
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        let req = http.request(options, function(res){
+            let body = '';
+            res.setEncoding('utf8');
+
+            res.on('data', function (chunk) {
+                body += chunk;
+            });
+
+            res.on('end', function(){
+                console.log("fabric response: "+body)
+                try{
+                    resolve(JSON.parse(body));
+                }catch(e){
+                    reject(e)
+                }
+            });
+        });
+
+        req.on('error', function(e){
+            reject(e);
+        });
+
+        // write data to request body
+        req.write(JSON.stringify(payload));
+        req.end();
+
     });
 }

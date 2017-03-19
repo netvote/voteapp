@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import {NavController, NavParams, MenuController, ActionSheetController} from 'ionic-angular';
-import {AngularFire} from "angularfire2";
+import { Component, ChangeDetectorRef } from '@angular/core';
+import {MenuController, ActionSheetController} from 'ionic-angular';
 import * as firebase from 'firebase';
 
 /*
@@ -19,10 +18,8 @@ export class ManageBallotsPage {
   private userId: string;
   private loading: boolean = true;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public actionSheetCtrl: ActionSheetController,
-              public angularfire: AngularFire, public menuCtrl: MenuController) {}
-
-
+  constructor(public actionSheetCtrl: ActionSheetController,
+              public menuCtrl: MenuController, public cdr: ChangeDetectorRef) {}
 
 
   ionViewDidLoad() {
@@ -51,12 +48,17 @@ export class ManageBallotsPage {
     });
 
     ballotsRef.on('child_changed',(b) => {
-      for(let i=0; i<this.ballots.length; i++){
-        if(this.ballots[i].key == b.key){
-          this.ballots[i] = this.toUIBallot(b)
-          return;
+      let tmpBallots = [];
+
+      this.ballots.forEach((ballot) => {
+        if(ballot.key == b.key) {
+          tmpBallots.push(this.toUIBallot(b))
+        }else{
+          tmpBallots.push(ballot)
         }
-      }
+      });
+      this.ballots = tmpBallots;
+      this.cdr.detectChanges();
     });
 
     ballotsRef.on('child_removed', (b) => {
@@ -68,6 +70,23 @@ export class ManageBallotsPage {
       }
     });
 
+  }
+
+  private getBallot(key){
+    for(let ballot of this.ballots) {
+      if (ballot.key == key) {
+        return ballot;
+      }
+    }
+    return {"val":{}}; //quack
+  }
+
+  isSynced(key){
+    return (this.getBallot(key).val.status == "success")
+  }
+
+  isSyncing(key){
+    return (this.getBallot(key).val.status == "pending")
   }
 
   // Toggle sidebar
