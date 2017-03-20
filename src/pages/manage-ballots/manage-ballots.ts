@@ -16,7 +16,6 @@ export class ManageBallotsPage {
 
   private ballots: any = [];
   private userId: string;
-  private loading: boolean = true;
 
   constructor(public actionSheetCtrl: ActionSheetController,
               public menuCtrl: MenuController, public cdr: ChangeDetectorRef) {}
@@ -40,7 +39,6 @@ export class ManageBallotsPage {
         tmpBallots.push(this.toUIBallot(ballot))
       });
       this.ballots = tmpBallots;
-      this.loading = false;
     });
 
     ballotsRef.on('child_added', (b) => {
@@ -149,6 +147,9 @@ export class ManageBallotsPage {
 
     let ballotRef = firebase.database().ref('/ballot-configs/' + ballotKey);
     ballotRef.remove((r) => {});
+
+    let resultsRef = firebase.database().ref('/ballot-results/' + ballotKey);
+    resultsRef.remove((r) => {});
   }
 
   private shareBallot(shareBallot){

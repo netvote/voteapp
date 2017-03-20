@@ -60,5 +60,10 @@
   <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus">
     <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.201280024085-u8ia4hloe3ru8n6j7j4e9qggikg0bdgb"/>
   </plugin>
+  <plugin name="ionic-plugin-deeplinks" spec="~1.0.14">
+    <variable name="URL_SCHEME" value="netvote" />
+    <variable name="DEEPLINK_SCHEME" value="http" />
+    <variable name="DEEPLINK_HOST" value="netvote.com" />
+  </plugin>
   <icon src="resources/ios/icon/icon-small@3x.png"/>
 </widget>

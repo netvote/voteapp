@@ -14,6 +14,7 @@ import * as firebase from 'firebase';
 import { AngularFireModule, AuthMethods, AuthProviders } from 'angularfire2';
 import { Login } from '../login';
 import {ManageBallotsPage} from "../pages/manage-ballots/manage-ballots";
+import {VoterBallotsPage} from "../pages/voter-ballots/voter-ballots";
 
 firebase.initializeApp(Login.firebaseConfig);
 
@@ -24,7 +25,8 @@ firebase.initializeApp(Login.firebaseConfig);
     HomePage,
     VerificationPage,
     TrialPage,
-    ManageBallotsPage
+    ManageBallotsPage,
+    VoterBallotsPage
   ],
   imports: [
     IonicModule.forRoot(MyApp, {
@@ -39,7 +41,8 @@ firebase.initializeApp(Login.firebaseConfig);
     HomePage,
     VerificationPage,
     TrialPage,
-    ManageBallotsPage
+    ManageBallotsPage,
+    VoterBallotsPage
   ],
   providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler }, LoginProvider, LogoutProvider, LoadingProvider, AlertProvider, ImageProvider]
 })

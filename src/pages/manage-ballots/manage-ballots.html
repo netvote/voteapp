@@ -3,7 +3,7 @@
     <ion-buttons left>
       <button ion-button icon-only tappable (click)="toggleMenu()"><ion-icon name="md-menu"></ion-icon></button>
     </ion-buttons>
-    <ion-title>Manage Ballots</ion-title>
+    <ion-title>Manage Elections</ion-title>
     <ion-buttons end>
       <button ion-button icon-only tappable (click)="addBallot()"><ion-icon name="add"></ion-icon></button>
     </ion-buttons>
@@ -13,9 +13,9 @@
 
 <ion-content padding>
 
-  <button [hidden]="loading || ballots.length > 0" ion-button block icon-left tappable class="dark" (click)="addBallot()"><ion-icon name="add"></ion-icon>Add ballot</button>
+  <button [hidden]="ballots.length > 0" ion-button block icon-left tappable class="dark" (click)="addBallot()"><ion-icon name="add"></ion-icon>Add Election</button>
 
-  <ion-card item-content *ngFor="let ballot of ballots" [hidden]="loading || ballots.length == 0">
+  <ion-card item-content *ngFor="let ballot of ballots" [hidden]="ballots.length == 0">
     <ion-card-content>
       <ion-row no-padding *ngIf="isSynced(ballot.key)">
         <button ion-button clear small icon-left>
@@ -38,7 +38,7 @@
         {{ ballot.val.config.Ballot.Description }}
       </p>
       <p>
-
+        <a href="netvote://ballot/{{ ballot.key }}">Ballot Link</a>
       </p>
     </ion-card-content>
     <ion-row no-padding [hidden]="isSyncing(ballot.key)">

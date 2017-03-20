@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import {Platform, Nav, MenuController, AlertController} from 'ionic-angular';
-import { StatusBar, Splashscreen } from 'ionic-native';
+import { StatusBar, Splashscreen, Deeplinks } from 'ionic-native';
 
 //Pages
 import { LoginPage } from '../pages/login/login';
@@ -9,6 +9,7 @@ import { HomePage } from '../pages/home/home';
 import { AngularFire } from 'angularfire2';
 import * as firebase from 'firebase';
 import {LogoutProvider} from "../providers/logout";
+import {VoterBallotsPage} from "../pages/voter-ballots/voter-ballots";
 
 @Component({
   templateUrl: 'app.html'
@@ -25,11 +26,29 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
       Splashscreen.hide();
+
+      Deeplinks.route({
+        '/:ballotId': VoterBallotsPage
+      }).subscribe((match) => {
+        console.log('Successfully matched route route=', JSON.stringify(match));
+        let ballotId = match.$link.path.substring(1);
+        console.log("deep loading ballot: "+ballotId);
+        if(this.nav != undefined) {
+          this.nav.setRoot(VoterBallotsPage, {"ballotId": ballotId});
+        }else{
+          console.error("this.nav is undefined!")
+        }
+      }, (nomatch) => {
+        // nomatch.$link - the full link data
+        console.error('Got a deeplink that didn\'t match', JSON.stringify(nomatch));
+      });
+
     });
 
     // Set your sidemenu pages here.
     this.pages = [
-      { title: 'Manage Ballots', icon: 'color-wand', component: ManageBallotsPage}
+      { title: 'Manage Elections', icon: 'color-wand', component: ManageBallotsPage},
+      { title: 'Voting', icon: 'checkmark-circle', component: VoterBallotsPage}
     ];
 
     // Check if user is logged in and authenticated on Firebase.
@@ -42,6 +61,11 @@ export class MyApp {
       }
     });
   }
+
+  ngOnInit() {
+
+  }
+
 
   // Toggle menu.
   toggleMenu() {

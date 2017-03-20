@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons left>
+      <button ion-button icon-only tappable (click)="toggleMenu()"><ion-icon name="md-menu"></ion-icon></button>
+    </ion-buttons>
+    <ion-title>Your Ballots</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only tappable (click)="add()"><ion-icon name="add"></ion-icon></button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-card item-content *ngFor="let ballot of ballots" [hidden]="ballots.length == 0">
+    <ion-card-content>
+
+      <img src="{{ ballot.val.config.Ballot.Attributes.Image }}" [hidden]="ballot.val.config.Ballot.Attributes.Image == null || ballot.val.config.Ballot.Attributes.Image == ''"/>
+
+      <ion-card-title>
+        {{ ballot.val.config.Ballot.Name }}
+      </ion-card-title>
+      <p>
+        {{ ballot.val.config.Ballot.Description }}
+      </p>
+      <p>
+
+      </p>
+    </ion-card-content>
+    <ion-row no-padding>
+      <ion-col>
+        <button ion-button clear small block icon-left>
+          <ion-icon color="primary" name='checkmark-circle'></ion-icon>
+          Vote
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+
+</ion-content>
