@@ -1,7 +1,7 @@
 let functions = require('firebase-functions');
 const admin = require('firebase-admin');
 let firebase = admin.initializeApp(functions.config().firebase);
-let FABRIC_API="104.154.202.247";
+let FABRIC_API='104.197.225.84';
 let http = require('http');
 
 
@@ -43,17 +43,38 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
                 });
 
                return createBallot(payload).then((fabricBallot)=>{
-                    let fabricId = fabricBallot.Id;
-                    let configIdPath = '/ballot-configs/'+ballotId+"/config/Ballot/Id";
-                    let configListIdPath = '/ballot-config-lists/'+evtPayload.owner+'/'+ballotId+'/config/Ballot/Id';
+                   let fabricId = fabricBallot.Id;
+                   let configIdPath = '/ballot-configs/'+ballotId+"/config/Ballot/Id";
+                   let configListIdPath = '/ballot-config-lists/'+evtPayload.owner+'/'+ballotId+'/config/Ballot/Id';
+                   let txPath = callbackRef+'/fabricBallot';
+                   let ballotResults = '/ballot-results/' + ballotId;
 
-                    let updates = {};
-                    updates[configIdPath] = fabricId;
-                    updates[configListIdPath] = fabricId;
-                    return firebase.database().ref().update(updates);
+                   let resultsObj = {
+                       owner: evtPayload.owner,
+                       id: ballotId,
+                       Id: fabricBallot.Id,
+                       decisions: {}
+                   };
+
+                   for(let decision of fabricBallot.Decisions){
+                       let decisionResults = { decision: decision};
+                       let thisResult = {};
+                       for(let option of decision.Options){
+                           thisResult[option.Id] = 0;
+                       }
+                       decisionResults['results'] = thisResult;
+                       resultsObj.decisions[decision.Id] = decisionResults;
+                   }
+
+
+                   let updates = {};
+                   updates[configIdPath] = fabricId;
+                   updates[configListIdPath] = fabricId;
+                   updates[txPath] = fabricBallot;
+                   updates[ballotResults] = resultsObj;
+
+                   return firebase.database().ref().update(updates);
                });
-                // invoke remote API
-                // get results and update firebase (Ids)
             }
 });
 
@@ -67,17 +88,18 @@ exports.commitBallot = functions.database.ref('/fabric-tx/ballot/{userId}/{ballo
             //TODO: UPDATE (keep Ids)
         }else{
             let evtPayload = event.data.val();
-            let ballotId = event.params.ballotId;
-            let userId = event.params.userId;
-
             if(evtPayload != null) {
-                firebase.database().ref('/ballot-configs/' + ballotId).update({status: evtPayload.status})
-                    .then(() => {
-                        firebase.database().ref('/ballot-config-lists/' + userId + '/' + ballotId).update({status: evtPayload.status})
-                    }).then(() => {
-                    event.data.ref.remove((r) => {
-                    })
-                });
+                let ballotId = event.params.ballotId;
+                let userId = event.params.userId;
+
+                let updates = {};
+                let ballotConfigStatus = '/ballot-configs/' + ballotId+'/status';
+                let ballotConfigListStatus = '/ballot-config-lists/' + userId + '/' + ballotId+'/status';
+
+                updates[ballotConfigStatus] = evtPayload.status;
+                updates[ballotConfigListStatus] = evtPayload.status;
+
+                return firebase.database().ref().update(updates);
             }
         }
     });
