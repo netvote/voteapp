@@ -43,12 +43,25 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
                 });
 
                return createBallot(payload).then((fabricBallot)=>{
-                   let fabricId = fabricBallot.Id;
-                   let configIdPath = '/ballot-configs/'+ballotId+"/config/Ballot/Id";
-                   let configListIdPath = '/ballot-config-lists/'+evtPayload.owner+'/'+ballotId+'/config/Ballot/Id';
+                   let configIdPath = '/ballot-configs/'+ballotId+"/config";
+                   let configListIdPath = '/ballot-config-lists/'+evtPayload.owner+'/'+ballotId+'/config';
                    let txPath = callbackRef+'/fabricBallot';
                    let ballotResults = '/ballot-results/' + ballotId;
 
+                   let newBallot = {};
+                   for (let key in fabricBallot) {
+                       if (fabricBallot.hasOwnProperty(key) && key != 'Decisions') {
+                            newBallot[key] = fabricBallot[key];
+                       }
+                   }
+                   let newDecisions = fabricBallot.Decisions;
+
+                   let newConfig = {
+                       "Ballot": newBallot,
+                       "Decisions": newDecisions
+                   };
+
+                   //results
                    let resultsObj = {
                        owner: evtPayload.owner,
                        id: ballotId,
@@ -66,10 +79,9 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
                        resultsObj.decisions[decision.Id] = decisionResults;
                    }
 
-
                    let updates = {};
-                   updates[configIdPath] = fabricId;
-                   updates[configListIdPath] = fabricId;
+                   updates[configIdPath] = newConfig;
+                   updates[configListIdPath] = newConfig;
                    updates[txPath] = fabricBallot;
                    updates[ballotResults] = resultsObj;
 
