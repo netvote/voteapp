@@ -30,17 +30,14 @@ export class MyApp {
       Deeplinks.route({
         '/:ballotId': VoterBallotsPage
       }).subscribe((match) => {
-        console.log('Successfully matched route route=', JSON.stringify(match));
         let ballotId = match.$link.path.substring(1);
-        console.log("deep loading ballot: "+ballotId);
         if(this.nav != undefined) {
           this.nav.setRoot(VoterBallotsPage, {"ballotId": ballotId});
         }else{
           console.error("this.nav is undefined!")
         }
       }, (nomatch) => {
-        // nomatch.$link - the full link data
-        console.error('Got a deeplink that didn\'t match', JSON.stringify(nomatch));
+        console.error('Got a deeplink that didn\'t match: '+nomatch.$link);
       });
 
     });

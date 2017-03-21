@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import {MenuController, ActionSheetController} from 'ionic-angular';
+import {MenuController, ActionSheetController, ToastController} from 'ionic-angular';
 import * as firebase from 'firebase';
+import {Clipboard} from "ionic-native";
 
 /*
   Generated class for the ManageBallots page.
@@ -18,7 +19,7 @@ export class ManageBallotsPage {
   private userId: string;
 
   constructor(public actionSheetCtrl: ActionSheetController,
-              public menuCtrl: MenuController, public cdr: ChangeDetectorRef) {}
+              public menuCtrl: MenuController, public cdr: ChangeDetectorRef, public toastCtrl: ToastController) {}
 
 
   ionViewDidLoad() {
@@ -35,7 +36,6 @@ export class ManageBallotsPage {
     ballotsRef.once("value").then((ballots) =>{
       let tmpBallots = []
       ballots.forEach((ballot) => {
-        console.log(JSON.stringify(ballot))
         tmpBallots.push(this.toUIBallot(ballot))
       });
       this.ballots = tmpBallots;
@@ -160,6 +160,16 @@ export class ManageBallotsPage {
 
   }
 
+  private copyLink(ballotId){
+    Clipboard.copy("netvote://ballot/"+ballotId).then((text) => {
+      let toast = this.toastCtrl.create({
+        message: 'Link copied to clipboard',
+        duration: 2000
+      });
+      toast.present();
+    });
+  }
+
 
   openMore(ballotId){
     let actionSheet = this.actionSheetCtrl.create({
@@ -170,6 +180,11 @@ export class ManageBallotsPage {
           role: 'destructive',
           handler: () => {
             this.deleteBallot(ballotId);
+          }
+        },{
+          text: 'Copy Link',
+          handler: () => {
+            this.copyLink(ballotId)
           }
         },{
           text: 'Share',

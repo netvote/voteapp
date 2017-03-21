@@ -69,7 +69,7 @@ export class LoginProvider {
               let userId, name, provider, img, email;
               let providerData = user.providerData[0];
 
-              console.log("creating: " + JSON.stringify(providerData));
+              //console.log("creating: " + JSON.stringify(providerData));
 
               userId = user.uid;
               email = user.email;

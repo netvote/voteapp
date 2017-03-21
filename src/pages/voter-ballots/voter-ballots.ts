@@ -33,11 +33,11 @@ export class VoterBallotsPage {
         console.log("adding ballot: /voter-ballot-lists/" + this.userId + '/' + ballotId);
         try {
           firebase.database().ref('/voter-ballot-lists/' + this.userId).child(ballotId).set(ballot.val()).catch((e) =>{
-            console.log("reject! "+JSON.stringify(e))
+            //console.log("reject! "+JSON.stringify(e))
           });
-          console.log("added!")
+          //console.log("added!")
         }catch(e){
-          console.error("ERROR: ", e);
+
         }
       });
     }
@@ -64,7 +64,7 @@ export class VoterBallotsPage {
     ballotsRef.once("value").then((ballots) =>{
       let tmpBallots = [];
       ballots.forEach((ballot) => {
-        console.log(JSON.stringify(ballot));
+        //console.log(JSON.stringify(ballot));
         tmpBallots.push(this.toUIBallot(ballot))
       });
       this.ballots = tmpBallots;
