@@ -16,18 +16,18 @@
   <button [hidden]="ballots.length > 0" ion-button block icon-left tappable class="dark" (click)="addBallot()"><ion-icon name="add"></ion-icon>Add Election</button>
 
   <ion-card item-content *ngFor="let ballot of ballots" [hidden]="ballots.length == 0">
-    <ion-card-content>
-      <ion-row no-padding *ngIf="isSynced(ballot.key)">
-        <button ion-button clear small icon-left>
-          <ion-icon color="primary" name='cloud-done'></ion-icon>
-          synced to blockchain
-        </button>
-      </ion-row>
-      <ion-row no-padding *ngIf="isSyncing(ballot.key)">
-        <button ion-button clear small icon-left>
-          <ion-icon color="primary" name='sync'></ion-icon>
-          syncing to blockchain
-        </button>
+    <ion-card-content style="padding-top: 6px">
+      <ion-row no-padding>
+        <ion-list no-lines no-padding>
+          <ion-item *ngIf="isSynced(ballot.key)"  no-padding>
+            <ion-icon item-left color="primary" name='cloud-done'></ion-icon>
+            <p>synced</p>
+          </ion-item>
+          <ion-item *ngIf="isSyncing(ballot.key)" no-padding>
+            <ion-spinner item-left text-center color="primary" name="crescent"></ion-spinner>
+            <p>syncing to blockchian</p>
+          </ion-item>
+        </ion-list>
       </ion-row>
       <img src="{{ ballot.val.config.Ballot.Attributes.Image }}" [hidden]="ballot.val.config.Ballot.Attributes.Image == null || ballot.val.config.Ballot.Attributes.Image == ''"/>
 

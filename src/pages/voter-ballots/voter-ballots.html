@@ -37,7 +37,7 @@
           <p>Polls open in {{ timeLeft(ballot.val.config.Ballot.StartTimeSeconds) }}</p>
         </button>
         <button [hidden]="!pollsClosed(ballot.val.config.Ballot)" ion-button clear small block icon-left>
-          <ion-icon color="dark" name='close-circle'></ion-icon>
+          <ion-icon color="dark" name='time'></ion-icon>
           <p>Polls are now closed</p>
         </button>
       </ion-col>
