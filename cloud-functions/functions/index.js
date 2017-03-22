@@ -2,6 +2,7 @@ let functions = require('firebase-functions');
 const admin = require('firebase-admin');
 let firebase = admin.initializeApp(functions.config().firebase);
 let FABRIC_API='104.198.240.210';
+let API_KEY = 'AIzaSyAUWhZClYHv8p6cdREZ-YJS_IS7njmXgzo';
 let http = require('http');
 
 
@@ -125,7 +126,8 @@ function createBallot(payload){
             path: "/api/v1/ballot",
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
             }
         };
 

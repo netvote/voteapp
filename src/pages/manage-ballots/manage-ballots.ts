@@ -86,6 +86,10 @@ export class ManageBallotsPage {
     this.menuCtrl.toggle();
   }
 
+  getNow(){
+    return Math.floor((new Date().getTime()/1000))
+  }
+
   addBallot(){
     let actionSheet = this.actionSheetCtrl.create({
       title: 'Ballot Options',
@@ -93,12 +97,17 @@ export class ManageBallotsPage {
         {
           text: 'One-Time',
           handler: () => {
-            this.saveBallot(this.getMockBallot(false))
+            this.saveBallot(this.getMockBallot(false, this.getNow()));
+          }
+        },{
+          text: 'Future One-Time',
+          handler: () => {
+            this.saveBallot(this.getMockBallot(false, this.getNow() + 3600));
           }
         },{
           text: 'One-Time 2FA',
           handler: () => {
-            this.saveBallot(this.getMockBallot(true))
+            this.saveBallot(this.getMockBallot(true, this.getNow()))
           }
         },{
           text: 'Repeatable',
@@ -233,12 +242,14 @@ export class ManageBallotsPage {
     };
   }
 
-  private getMockBallot(has2Factor){
+  private getMockBallot(has2Factor, StartTime){
     return {
       "Ballot": {
         "Name": "Beer Choices",
         "Description": "Help us pick your beer."+(has2Factor? " This requires 2FA." : ""),
         "Requires2FA": has2Factor,
+        "StartTimeSeconds": StartTime,
+        "EndTimeSeconds": (StartTime + 3600),
         "Attributes":{
           "Image": "https://rafflecreator.s3.amazonaws.com/2b3fc509-82bb-4d03-8d47-cfe0bd0bba3c.jpg"
         }

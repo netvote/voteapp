@@ -7,7 +7,7 @@
 
 import { VerificationPage } from './pages/verification/verification';
 import { TrialPage } from './pages/trial/trial';
-import {ManageBallotsPage} from "./pages/manage-ballots/manage-ballots";
+import {VoterBallotsPage} from "./pages/voter-ballots/voter-ballots";
 
 export namespace Login {
   // Get your Firebase app's config on your Firebase console. "Add Firebase to your web app".
@@ -31,7 +31,7 @@ export namespace Login {
   // MAKE SURE TO GET THE client_id OF client_type 3 and NOT client_type 1!!!
   export const googleClientId: string = "201280024085-u8ia4hloe3ru8n6j7j4e9qggikg0bdgb.apps.googleusercontent.com";
   // Set in your appropriate Login routes, don't forget to import the pages on app.module.ts
-  export const homePage = ManageBallotsPage;
+  export const homePage = VoterBallotsPage;
   export const verificationPage = VerificationPage;
   export const trialPage = TrialPage;
   // Set whether emailVerification is enabled or not.

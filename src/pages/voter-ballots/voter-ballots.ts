@@ -1,5 +1,5 @@
 import {Component, ChangeDetectorRef} from '@angular/core';
-import {NavParams, MenuController, ActionSheetController} from 'ionic-angular';
+import {NavParams, MenuController, ActionSheetController, AlertController} from 'ionic-angular';
 import * as firebase from 'firebase';
 
 
@@ -19,7 +19,7 @@ export class VoterBallotsPage {
   private userId: string;
   private ballotId: string = null;
 
-  constructor(public actionSheetCtrl: ActionSheetController, public menuCtrl: MenuController, public navParam: NavParams, public cdr: ChangeDetectorRef) {
+  constructor(public actionSheetCtrl: ActionSheetController, public alertCtrl: AlertController, public menuCtrl: MenuController, public navParam: NavParams, public cdr: ChangeDetectorRef) {
     this.ballotId = this.navParam.get("ballotId");
   }
 
@@ -35,12 +35,59 @@ export class VoterBallotsPage {
     }
   }
 
+  timeLeft(secondsTime){
+    let now = Math.floor(new Date().getTime()/1000);
+    return this.toHHMMSS((secondsTime - now));
+  }
+
+  toHHMMSS(secs) {
+    let sec_num = parseInt(secs, 10);
+    let hours = Math.floor(sec_num / 3600) % 24;
+    let minutes = Math.floor(sec_num / 60) % 60;
+    let seconds = sec_num % 60;
+    return [hours, minutes, seconds]
+        .map(v => v < 10 ? "0" + v : v)
+        .filter((v, i) => v !== "00" || i > 0)
+        .join(":")
+  };
+
+  pollsClosed(ballotConfig){
+    let now = Math.floor(new Date().getTime()/1000);
+    let result = (ballotConfig.EndTimeSeconds < now);
+    return result;
+  }
+
+  pollsFuture(ballotConfig){
+    let now = Math.floor(new Date().getTime()/1000);
+    let result = (ballotConfig.StartTimeSeconds > now);
+    return result;
+  }
+
+  pollsOpen(ballotConfig){
+    let now = Math.floor(new Date().getTime()/1000);
+    let result = (ballotConfig.StartTimeSeconds <= now && ballotConfig.EndTimeSeconds >= now);
+    return result;
+  }
+
   private getBallot(ballotId){
     console.log("getting ballot-config: "+ballotId);
     return firebase.database().ref('/ballot-configs/' + ballotId).once("value");
   }
 
+  private exists(obj){
+    return obj && obj !== 'null' && obj !== 'undefined' && JSON.stringify(obj) != 'null';
+  }
+
+  private removeBallot(ballotId){
+    firebase.database().ref('/voter-ballot-lists/' + this.userId).child(ballotId).remove();
+  }
+
   ionViewDidLoad() {
+    setInterval(()=>{
+      try {
+        this.cdr.detectChanges();
+      }catch(e){}
+    }, 1000);
     this.menuCtrl.enable(true);
     this.menuCtrl.swipeEnable(true);
     this.menuCtrl.close();
@@ -56,8 +103,10 @@ export class VoterBallotsPage {
     ballotsRef.on('child_added', (b) => {
       console.log("child_added: "+b.key);
       this.getBallot(b.key).then((ballot) => {
-        this.ballots.push(this.toUIBallot(ballot));
-        this.cdr.detectChanges();
+        if(this.exists(ballot)){
+          this.ballots.push(this.toUIBallot(ballot));
+          this.cdr.detectChanges();
+        }
       });
     });
 
@@ -88,6 +137,27 @@ export class VoterBallotsPage {
       }
     });
 
+  }
+
+  confirmRemove(ballotId){
+    let confirm = this.alertCtrl.create({
+      title: 'Remove this ballot?',
+      message: 'Would you like to remove this ballot?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            this.removeBallot(ballotId);
+          }
+        }
+      ]
+    });
+    confirm.present();
   }
 
   add(){

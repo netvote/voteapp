@@ -37,9 +37,6 @@
       <p>
         {{ ballot.val.config.Ballot.Description }}
       </p>
-      <p>
-        <a href="netvote://ballot/{{ ballot.key }}">Ballot Link</a>
-      </p>
     </ion-card-content>
     <ion-row no-padding [hidden]="isSyncing(ballot.key)">
       <ion-col>
