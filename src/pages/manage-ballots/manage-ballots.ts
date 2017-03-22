@@ -1,7 +1,8 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import {MenuController, ActionSheetController, ToastController} from 'ionic-angular';
+import {MenuController, ActionSheetController, ToastController, NavController} from 'ionic-angular';
 import * as firebase from 'firebase';
 import {Clipboard} from "ionic-native";
+import {VoterBallotsPage} from "../voter-ballots/voter-ballots";
 
 /*
   Generated class for the ManageBallots page.
@@ -18,7 +19,7 @@ export class ManageBallotsPage {
   private ballots: any = [];
   private userId: string;
 
-  constructor(public actionSheetCtrl: ActionSheetController,
+  constructor(public navCtrl: NavController, public actionSheetCtrl: ActionSheetController,
               public menuCtrl: MenuController, public cdr: ChangeDetectorRef, public toastCtrl: ToastController) {}
 
 
@@ -33,16 +34,9 @@ export class ManageBallotsPage {
 
     let ballotsRef = firebase.database().ref('/ballot-config-lists/' + userId).orderByKey();
 
-    ballotsRef.once("value").then((ballots) =>{
-      let tmpBallots = []
-      ballots.forEach((ballot) => {
-        tmpBallots.push(this.toUIBallot(ballot))
-      });
-      this.ballots = tmpBallots;
-    });
-
     ballotsRef.on('child_added', (b) => {
       this.ballots.push(this.toUIBallot(b))
+      this.cdr.detectChanges();
     });
 
     ballotsRef.on('child_changed',(b) => {
@@ -194,7 +188,7 @@ export class ManageBallotsPage {
         },{
           text: 'Share to Me (dev)',
           handler: () => {
-            this.sendShareBallot(ballotId, ["+16788965681"], ["steven.landers@gmail.com"])
+            this.navCtrl.setRoot(VoterBallotsPage, { ballotId: ballotId })
           }
         },{
           text: 'Cancel',

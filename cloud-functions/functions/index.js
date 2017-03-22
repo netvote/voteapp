@@ -1,9 +1,8 @@
 let functions = require('firebase-functions');
 const admin = require('firebase-admin');
 let firebase = admin.initializeApp(functions.config().firebase);
-let FABRIC_API='104.197.225.84';
+let FABRIC_API='104.198.240.210';
 let http = require('http');
-
 
 
 exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')

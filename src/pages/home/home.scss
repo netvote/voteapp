@@ -1,6 +1,9 @@
 page-home {
   .profile {
-
+    position: relative;
+    overflow: hidden;
+    height: 24vh;
+    margin-bottom: -0.625em;
     ion-icon{
       font-size: 120px;
       margin: auto;
