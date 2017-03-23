@@ -228,6 +228,7 @@ export class ManageBallotsPage {
         "Name": "Who is your pick?",
         "Repeatable": true,
         "RepeatVoteDelaySeconds": 10,
+        "ResponsesRequired": 1,
         "Options": [{
           "Id": "john",
           "Name": "John"
@@ -256,6 +257,7 @@ export class ManageBallotsPage {
       },
       "Decisions": [{
         "Name": "What is your favorite beer color?",
+        "ResponsesRequired": 2,
         "Options": [{
           "Id": "red",
           "Name": "Red"
@@ -268,6 +270,7 @@ export class ManageBallotsPage {
         }]
       }, {
         "Name": "Do you like hops?",
+        "ResponsesRequired": 1,
         "Options": [{
           "Id": "yes",
           "Name": "Yes"

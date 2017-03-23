@@ -1,6 +1,7 @@
 import {Component, ChangeDetectorRef} from '@angular/core';
-import {NavParams, MenuController, ActionSheetController, AlertController} from 'ionic-angular';
+import {NavParams, MenuController, ActionSheetController, AlertController, NavController} from 'ionic-angular';
 import * as firebase from 'firebase';
+import {VoterBallotPage} from "../voter-ballot/voter-ballot";
 
 
 /*
@@ -18,8 +19,9 @@ export class VoterBallotsPage {
   private ballots: any = [];
   private userId: string;
   private ballotId: string = null;
+  private refreshInterval: any = null;
 
-  constructor(public actionSheetCtrl: ActionSheetController, public alertCtrl: AlertController, public menuCtrl: MenuController, public navParam: NavParams, public cdr: ChangeDetectorRef) {
+  constructor(public navCtrl: NavController, public actionSheetCtrl: ActionSheetController, public alertCtrl: AlertController, public menuCtrl: MenuController, public navParam: NavParams, public cdr: ChangeDetectorRef) {
     this.ballotId = this.navParam.get("ballotId");
   }
 
@@ -83,11 +85,14 @@ export class VoterBallotsPage {
   }
 
   ionViewDidLoad() {
-    setInterval(()=>{
-      try {
-        this.cdr.detectChanges();
-      }catch(e){}
-    }, 1000);
+    if(this.refreshInterval == null) {
+      this.refreshInterval = setInterval(() => {
+        try {
+          this.cdr.detectChanges();
+        } catch (e) {
+        }
+      }, 1000);
+    }
     this.menuCtrl.enable(true);
     this.menuCtrl.swipeEnable(true);
     this.menuCtrl.close();
@@ -177,6 +182,10 @@ export class VoterBallotsPage {
       ]
     });
     actionSheet.present();
+  }
+
+  openBallot(ballot){
+    this.navCtrl.push(VoterBallotPage, {"ballot": ballot});
   }
 
   // Toggle sidebar

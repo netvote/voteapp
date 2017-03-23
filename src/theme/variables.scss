@@ -48,7 +48,7 @@ $google: #dd4b39;
 $google-active: #ff563f;
 
 ion-navbar {
-  background: $primary;
+  background: $dark;
 }
 button.secondary {
   background: $secondary;
@@ -71,6 +71,9 @@ button.dark:active {
 
 // Set header bar color to our primary color
 $toolbar-background: $dark;
+$toolbar-active-color: $dark;
+$toolbar-inactive-color: $dark;
+
 
 // App iOS Variables
 // --------------------------------------------------
