@@ -18,26 +18,24 @@
 
 <ion-content padding>
     <ion-card *ngFor="let decision of decisions;" [hidden]="decisions.length == 0">
-    <ion-card-content>
-      <ion-card-title>
-        {{ decision.Name }}
-      </ion-card-title>
-      <p>This is a description of this option.  Choose: {{ decision.ResponsesRequired }}</p>
-        <ion-list>
-            <ion-item *ngFor="let opt of decision.Options">
-                <ion-label>{{opt.Name}}</ion-label>
-                <ion-checkbox [disabled]="isCheckboxDisabled(decision.Id, opt.Id)" [(ngModel)]="voterDecisions[decision.Id].Selections[opt.Id]" color="primary"></ion-checkbox>
-            </ion-item>
-        </ion-list>
-    </ion-card-content>
-
-  </ion-card>
-
-  <button ion-button block>
-    Cast Vote
-  </button>
-
-
+        <ion-card-content>
+          <ion-card-title>
+            {{ decision.Name }}
+          </ion-card-title>
+          <p>This is a description of this option.  Choose: {{ decision.ResponsesRequired }}</p>
+            <ion-list no-lines>
+                <ion-item *ngFor="let opt of decision.Options">
+                    <ion-label>{{opt.Name}}</ion-label>
+                    <ion-checkbox [disabled]="isCheckboxDisabled(decision.Id, opt.Id)" [(ngModel)]="voterDecisions[decision.Id].Selections[opt.Id]" color="primary"></ion-checkbox>
+                </ion-item>
+            </ion-list>
+        </ion-card-content>
+    </ion-card>
+<br/><!-- TODO: this is a hack because I suck at HTML.  Fix me. -->
+    <button padding [disabled]="isCastVoteDisabled()" ion-button block>
+        Cast Vote
+    </button>
 
 </ion-content>
+
 

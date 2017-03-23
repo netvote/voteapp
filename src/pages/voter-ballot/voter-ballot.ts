@@ -33,6 +33,26 @@ export class VoterBallotPage {
     })
   }
 
+  isCastVoteDisabled(){
+      for(let decisionId in this.voterDecisions){
+          if(this.voterDecisions.hasOwnProperty(decisionId)){
+              let decision = this.voterDecisions[decisionId];
+              let required = decision.ResponsesRequired;
+              let selection = decision.Selections;
+              let count = 0;
+              for(let optionId in selection){
+                  if(selection.hasOwnProperty(optionId)){
+                      count += (selection[optionId]) ? 1 : 0;
+                  }
+              }
+              if(count < required){
+                  return true;
+              }
+          }
+      }
+      return false;
+  }
+
   isCheckboxDisabled(decisionId, thisOptionId){
       let required = this.voterDecisions[decisionId].ResponsesRequired;
       let selection = this.voterDecisions[decisionId].Selections;
