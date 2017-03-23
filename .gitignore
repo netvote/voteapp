@@ -4,3 +4,4 @@ plugins
 node_modules
 .idea
 www/build
+npm-debug.log
