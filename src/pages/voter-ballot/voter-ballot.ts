@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import {NavController, NavParams, ModalController, ViewController} from 'ionic-angular';
+import {MoreInfoModalPage} from "./voter-ballot-more-info";
 
 /*
   Generated class for the VoterBallot page.
@@ -18,7 +19,7 @@ export class VoterBallotPage {
   private timesUp: boolean = false;
   voterDecisions: any = {};
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public modalCtrl: ModalController, public navParams: NavParams) {
     this.ballot = navParams.get("ballot");
   }
 
@@ -33,24 +34,32 @@ export class VoterBallotPage {
     })
   }
 
+  openInfoModal(option){
+    this.modalCtrl.create(MoreInfoModalPage, { option: option }).present()
+  }
+
   isCastVoteDisabled(){
       for(let decisionId in this.voterDecisions){
           if(this.voterDecisions.hasOwnProperty(decisionId)){
-              let decision = this.voterDecisions[decisionId];
-              let required = decision.ResponsesRequired;
-              let selection = decision.Selections;
-              let count = 0;
-              for(let optionId in selection){
-                  if(selection.hasOwnProperty(optionId)){
-                      count += (selection[optionId]) ? 1 : 0;
-                  }
-              }
-              if(count < required){
+              if(!this.isDecisionComplete(decisionId)){
                   return true;
               }
           }
       }
       return false;
+  }
+
+  isDecisionComplete(decisionId){
+      let decision = this.voterDecisions[decisionId];
+      let required = decision.ResponsesRequired;
+      let selection = decision.Selections;
+      let count = 0;
+      for(let optionId in selection){
+          if(selection.hasOwnProperty(optionId)){
+              count += (selection[optionId]) ? 1 : 0;
+          }
+      }
+      return (count == required);
   }
 
   isCheckboxDisabled(decisionId, thisOptionId){

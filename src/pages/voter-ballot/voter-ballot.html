@@ -6,37 +6,42 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>{{ ballot.config.Ballot.Name }}</ion-title>
-    <ion-buttons end>
-      <button ion-button>{{ timeLeft() }}</button>
-    </ion-buttons>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title>{{ ballot.config.Ballot.Name }}</ion-title>
+        <ion-buttons end>
+            <button ion-button>{{ timeLeft() }}</button>
+        </ion-buttons>
+    </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
     <ion-card *ngFor="let decision of decisions;" [hidden]="decisions.length == 0">
-        <ion-card-header>
-            {{ decision.Name }}
-        </ion-card-header>
+        <ion-item>
+            <ion-icon item-left [color]="isDecisionComplete(decision.Id) ? 'secondary' : 'dark'" [isActive]="isDecisionComplete(decision.Id)" name="checkmark-circle"></ion-icon>
+            <h2 text-wrap>{{decision.Name}}</h2>
+        </ion-item>
         <ion-card-content>
-            <ion-list no-lines>
-                <ion-item text-wrap><p>{{ decision.Description }}</p></ion-item>
-                <ion-item><p style="font-weight: bold">Choose: {{ decision.ResponsesRequired }}</p></ion-item>
-                <ion-item *ngFor="let opt of decision.Options">
-                    <ion-label>{{opt.Name}}</ion-label>
-                    <ion-checkbox [disabled]="isCheckboxDisabled(decision.Id, opt.Id)" [(ngModel)]="voterDecisions[decision.Id].Selections[opt.Id]" color="primary"></ion-checkbox>
-                </ion-item>
-            </ion-list>
+            <ion-item text-wrap>
+                <p>{{ decision.Description }}</p>
+            </ion-item>
+            <ion-item>
+            <p style="font-weight: bold">Choose: {{ decision.ResponsesRequired }}</p>
+            </ion-item>
+
+            <ion-item *ngFor="let opt of decision.Options">
+                <ion-checkbox item-left [disabled]="isCheckboxDisabled(decision.Id, opt.Id)" [(ngModel)]="voterDecisions[decision.Id].Selections[opt.Id]" color="primary"></ion-checkbox>
+                <ion-label text-wrap style="font-size: 14px" item-left>{{opt.Name}}</ion-label>
+                <button [hidden]="opt.Description == null" ion-button item-right clear color="primary" (click)="openInfoModal(opt)">more info</button>
+            </ion-item>
         </ion-card-content>
     </ion-card>
-<br/><!-- TODO: this <br/> is a hack because I suck at HTML.  Fix me. -->
-    <button padding [disabled]="isCastVoteDisabled()" ion-button block>
+    <div style="margin: 12px">
+    <button block [disabled]="isCastVoteDisabled()" ion-button>
         Cast Vote
     </button>
-
+    </div>
 </ion-content>
 
 

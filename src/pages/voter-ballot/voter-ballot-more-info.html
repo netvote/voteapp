@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title color="light">
+            {{option.Name}}
+        </ion-title>
+        <ion-buttons start>
+            <button ion-button (click)="dismiss()">
+                <span ion-text color="light">Close</span>
+            </button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-card>
+        <ion-card-content>
+            <ion-item text-wrap>{{ option.Description }}</ion-item>
+        </ion-card-content>
+    </ion-card>
+</ion-content>
