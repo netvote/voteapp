@@ -258,19 +258,24 @@ export class ManageBallotsPage {
       "Decisions": [{
         "Name": "What is your favorite beer color?",
         "ResponsesRequired": 2,
+        "Description": "We will use this color to build a perfect beer for you",
         "Options": [{
           "Id": "red",
+          "Description": "This is somewhere between brick red and dusty rose.",
           "Name": "Red"
         }, {
           "Id": "gold",
+          "Description": "Imagine filling a class with sunshine without melting the glass",
           "Name": "Gold"
         },{
           "Id": "brown",
+          "Description": "If you like toasted malts, then you'll love toasted malts.",
           "Name": "Brown"
         }]
       }, {
         "Name": "Do you like hops?",
         "ResponsesRequired": 1,
+        "Description": "This will let us know whether to make your beer taste like a pine tree.",
         "Options": [{
           "Id": "yes",
           "Name": "Yes"

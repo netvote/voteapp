@@ -18,12 +18,13 @@
 
 <ion-content padding>
     <ion-card *ngFor="let decision of decisions;" [hidden]="decisions.length == 0">
-        <ion-card-content>
-          <ion-card-title>
+        <ion-card-header>
             {{ decision.Name }}
-          </ion-card-title>
-          <p>This is a description of this option.  Choose: {{ decision.ResponsesRequired }}</p>
+        </ion-card-header>
+        <ion-card-content>
             <ion-list no-lines>
+                <ion-item text-wrap><p>{{ decision.Description }}</p></ion-item>
+                <ion-item><p style="font-weight: bold">Choose: {{ decision.ResponsesRequired }}</p></ion-item>
                 <ion-item *ngFor="let opt of decision.Options">
                     <ion-label>{{opt.Name}}</ion-label>
                     <ion-checkbox [disabled]="isCheckboxDisabled(decision.Id, opt.Id)" [(ngModel)]="voterDecisions[decision.Id].Selections[opt.Id]" color="primary"></ion-checkbox>
