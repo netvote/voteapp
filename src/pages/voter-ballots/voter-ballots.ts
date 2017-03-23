@@ -1,4 +1,4 @@
-import {Component, ChangeDetectorRef} from '@angular/core';
+import {Component, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
 import {NavParams, MenuController, ActionSheetController, AlertController, NavController} from 'ionic-angular';
 import * as firebase from 'firebase';
 import {VoterBallotPage} from "../voter-ballot/voter-ballot";

@@ -38,7 +38,7 @@
         </ion-card-content>
     </ion-card>
     <div style="margin: 12px">
-    <button block [disabled]="isCastVoteDisabled()" ion-button>
+    <button block (click)="castVote()" [disabled]="isCastVoteDisabled()" ion-button>
         Cast Vote
     </button>
     </div>

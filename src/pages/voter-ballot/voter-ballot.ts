@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import {NavController, NavParams, ModalController, ViewController} from 'ionic-angular';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
+import {NavController, NavParams, ModalController} from 'ionic-angular';
 import {MoreInfoModalPage} from "./voter-ballot-more-info";
+import * as firebase from 'firebase';
 
 /*
   Generated class for the VoterBallot page.
@@ -36,6 +37,37 @@ export class VoterBallotPage {
 
   openInfoModal(option){
     this.modalCtrl.create(MoreInfoModalPage, { option: option }).present()
+  }
+
+  private buildVoteDecisions(){
+      let result = [];
+      this.decisions.forEach((d) => {
+        let selections = {};
+        let selectionObj = this.voterDecisions[d.Id].Selections;
+        for(let optionId in selectionObj){
+            if(selectionObj.hasOwnProperty(optionId)){
+                if(selectionObj[optionId] == true){
+                    selections[optionId] = 1;
+                }
+            }
+        }
+        result.push({
+            DecisionId: d.Id,
+            Selections: selections
+        })
+      });
+      return result;
+  }
+
+  castVote(){
+    let vote = {
+        BallotId: this.ballot.config.Ballot.Id,
+        VoterId: firebase.auth().currentUser.uid,
+        Decisions: this.buildVoteDecisions()
+    };
+    console.log(JSON.stringify(this.voterDecisions));
+    console.log(JSON.stringify(vote));
+    //TODO: confirmation stuff
   }
 
   isCastVoteDisabled(){
