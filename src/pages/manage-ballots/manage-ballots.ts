@@ -159,10 +159,6 @@ export class ManageBallotsPage {
 
   }
 
-  private sendShareBallot(ballotId, phones, emails){
-
-  }
-
   private copyLink(ballotId){
     Clipboard.copy("netvote://ballot/"+ballotId).then((text) => {
       let toast = this.toastCtrl.create({

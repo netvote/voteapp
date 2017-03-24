@@ -28,15 +28,15 @@
     </ion-card-content>
     <ion-row no-padding>
       <ion-col>
-        <button [hidden]="!pollsOpen(ballot.val.config.Ballot)" (click)="openBallot(ballot.val)" ion-button clear small block icon-left>
+        <button [hidden]="!(voteTimers[ballot.key].state == 'OPEN')" (click)="openBallot(ballot)" ion-button clear small block icon-left>
           <ion-icon color="primary" name='checkmark-circle'></ion-icon>
-          Vote Now ({{ timeLeft(ballot.val.config.Ballot.EndTimeSeconds) }})
+          Vote Now ({{ voteTimers[ballot.key].timeLeftText }})
         </button>
-        <button [hidden]="!pollsFuture(ballot.val.config.Ballot)" ion-button clear small block icon-left>
+        <button [hidden]="!(voteTimers[ballot.key].state == 'FUTURE')" ion-button clear small block icon-left>
           <ion-icon color="dark" name='time'></ion-icon>
-          <p>Poll opens in {{ timeLeft(ballot.val.config.Ballot.StartTimeSeconds) }}</p>
+          <p>Poll opens in {{ voteTimers[ballot.key].timeLeftText }}</p>
         </button>
-        <button [hidden]="!pollsClosed(ballot.val.config.Ballot)" ion-button clear small block icon-left>
+        <button [hidden]="!(voteTimers[ballot.key].state == 'CLOSED')" ion-button clear small block icon-left>
           <ion-icon color="dark" name='time'></ion-icon>
           <p>Poll is now closed</p>
         </button>

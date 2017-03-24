@@ -19,6 +19,7 @@ export class VoterBallotsPage {
   private ballots: any = [];
   private userId: string;
   private ballotId: string = null;
+  private voteTimers: any = {};
   private refreshInterval: any = null;
 
   constructor(public navCtrl: NavController, public actionSheetCtrl: ActionSheetController, public alertCtrl: AlertController, public menuCtrl: MenuController, public navParam: NavParams, public cdr: ChangeDetectorRef) {
@@ -53,24 +54,6 @@ export class VoterBallotsPage {
         .join(":")
   };
 
-  pollsClosed(ballotConfig){
-    let now = Math.floor(new Date().getTime()/1000);
-    let result = (ballotConfig.EndTimeSeconds < now);
-    return result;
-  }
-
-  pollsFuture(ballotConfig){
-    let now = Math.floor(new Date().getTime()/1000);
-    let result = (ballotConfig.StartTimeSeconds > now);
-    return result;
-  }
-
-  pollsOpen(ballotConfig){
-    let now = Math.floor(new Date().getTime()/1000);
-    let result = (ballotConfig.StartTimeSeconds <= now && ballotConfig.EndTimeSeconds >= now);
-    return result;
-  }
-
   private getBallot(ballotId){
     console.log("getting ballot-config: "+ballotId);
     return firebase.database().ref('/ballot-configs/' + ballotId).once("value");
@@ -84,15 +67,52 @@ export class VoterBallotsPage {
     firebase.database().ref('/voter-ballot-lists/' + this.userId).child(ballotId).remove();
   }
 
-  ionViewDidLoad() {
-    if(this.refreshInterval == null) {
-      this.refreshInterval = setInterval(() => {
-        try {
-          this.cdr.detectChanges();
-        } catch (e) {
-        }
-      }, 1000);
+  private addTimer(ballot){
+      let ballotConfig = ballot.val().config.Ballot;
+      this.voteTimers[ballot.key] = {
+          StartTimeSeconds: ballotConfig.StartTimeSeconds,
+          EndTimeSeconds: ballotConfig.EndTimeSeconds
+      }
+  }
+
+  private updateTimes(){
+      let now = Math.floor(new Date().getTime()/1000);
+      for(let ballotId in this.voteTimers){
+          if(this.voteTimers.hasOwnProperty(ballotId)){
+              let timeConfig = this.voteTimers[ballotId];
+              if(now < timeConfig.StartTimeSeconds){
+                  this.voteTimers[ballotId].state = "FUTURE";
+                  this.voteTimers[ballotId].timeLeftText = this.timeLeft(timeConfig.StartTimeSeconds);
+              }else if(now < timeConfig.EndTimeSeconds){
+                  this.voteTimers[ballotId].state = "OPEN";
+                  this.voteTimers[ballotId].timeLeftText = this.timeLeft(timeConfig.EndTimeSeconds);
+              }else{
+                  this.voteTimers[ballotId].state = "CLOSED";
+              }
+          }
+      }
+  }
+
+  private startTimer(){
+      this.refreshInterval = setInterval(()=>{
+          this.updateTimes()
+      }, 500)
+  }
+
+  private stopTimer(){
+      clearInterval(this.refreshInterval);
+  }
+
+    ionViewDidEnter(){
+        this.startTimer();
     }
+
+    ionViewWillLeave(){
+        this.stopTimer();
+    }
+
+  ionViewDidLoad() {
+
     this.menuCtrl.enable(true);
     this.menuCtrl.swipeEnable(true);
     this.menuCtrl.close();
@@ -109,8 +129,8 @@ export class VoterBallotsPage {
       console.log("child_added: "+b.key);
       this.getBallot(b.key).then((ballot) => {
         if(this.exists(ballot)){
+          this.addTimer(ballot);
           this.ballots.push(this.toUIBallot(ballot));
-          this.cdr.detectChanges();
         }
       });
     });
@@ -185,7 +205,7 @@ export class VoterBallotsPage {
   }
 
   openBallot(ballot){
-    this.navCtrl.push(VoterBallotPage, {"ballot": ballot});
+    this.navCtrl.push(VoterBallotPage, {"ballotId":ballot.key, "ballot": ballot.val});
   }
 
   // Toggle sidebar

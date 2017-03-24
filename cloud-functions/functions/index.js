@@ -90,6 +90,27 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
             }
 });
 
+exports.castVote = functions.database.ref('/votes/{userId}/{ballotId}/{txId}')
+    .onWrite(event => {
+
+        let ballotId = event.params.ballotId;
+        let userId = event.params.userId;
+        let decisions = event.data.val().vote.Decisions;
+
+        let payload = {
+            VoterId: userId,
+            Decision: decisions
+        };
+        return firebase.database().ref('/ballot-configs/' + ballotId).once("value").then((ballot) => {
+            payload["BallotId"] = ballot.val().config.Ballot.Id;
+            console.log(JSON.stringify(event.data.val()));
+            console.log(JSON.stringify(payload));
+            //TODO: update status to pending
+            //TODO: call API to cast vote
+        });
+    });
+
+
 exports.commitBallot = functions.database.ref('/fabric-tx/ballot/{userId}/{ballotId}')
     .onWrite(event => {
         if (!event.data.exists()) {
@@ -142,6 +163,7 @@ function createBallot(payload){
             res.on('end', function(){
                 console.log("fabric response: "+body);
                 try{
+                    //TODO: handle JSON errors
                     resolve(JSON.parse(body));
                 }catch(e){
                     reject(e)

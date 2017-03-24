@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy} from '@angular/core';
+import {Component} from '@angular/core';
 import {NavController, NavParams, ModalController} from 'ionic-angular';
 import {MoreInfoModalPage} from "./voter-ballot-more-info";
 import * as firebase from 'firebase';
@@ -16,23 +16,49 @@ import * as firebase from 'firebase';
 export class VoterBallotPage {
 
   private ballot: any;
+  private ballotId: string;
+  private userId: string;
   private decisions: any = [];
   private timesUp: boolean = false;
+  private timeLeft: string;
+  private processing: boolean = false;
   voterDecisions: any = {};
+  private refreshInterval: any;
 
   constructor(public navCtrl: NavController, public modalCtrl: ModalController, public navParams: NavParams) {
     this.ballot = navParams.get("ballot");
+    this.ballotId = navParams.get("ballotId");
+    this.userId = firebase.auth().currentUser.uid;
+  }
+
+  startTimer(){
+      this.refreshInterval = setInterval(()=>{
+         this.updateTimeLeft();
+      }, 500);
+  }
+
+  stopTimer(){
+      clearInterval(this.refreshInterval);
+  }
+
+  ionViewDidEnter(){
+      this.startTimer();
+  }
+
+  ionViewWillLeave(){
+      this.stopTimer();
   }
 
   ionViewDidLoad() {
-    this.decisions = this.ballot.config.Decisions;
-    console.log('ionViewDidLoad VoterBallotPage');
-    this.decisions.forEach((d) => {
-        this.voterDecisions[d.Id] = {
-            ResponsesRequired: d.ResponsesRequired,
-            Selections: {}
-        }
-    })
+      this.updateTimeLeft();
+      this.decisions = this.ballot.config.Decisions;
+      console.log('ionViewDidLoad VoterBallotPage');
+      this.decisions.forEach((d) => {
+          this.voterDecisions[d.Id] = {
+              ResponsesRequired: d.ResponsesRequired,
+              Selections: {}
+          }
+      })
   }
 
   openInfoModal(option){
@@ -60,14 +86,21 @@ export class VoterBallotPage {
   }
 
   castVote(){
-    let vote = {
-        BallotId: this.ballot.config.Ballot.Id,
-        VoterId: firebase.auth().currentUser.uid,
-        Decisions: this.buildVoteDecisions()
-    };
-    console.log(JSON.stringify(this.voterDecisions));
-    console.log(JSON.stringify(vote));
-    //TODO: confirmation stuff
+      if(!this.processing) {
+          this.processing = true;
+
+          let vote = {
+              Decisions: this.buildVoteDecisions()
+          };
+          console.log(JSON.stringify(this.voterDecisions));
+          console.log(JSON.stringify(vote));
+          let ref = firebase.database().ref('/votes/' + this.userId + '/' + this.ballotId).push();
+          ref.set({
+              "vote": vote
+          }).then(() => {
+              //wait for success
+          });
+      }
   }
 
   isCastVoteDisabled(){
@@ -113,7 +146,7 @@ export class VoterBallotPage {
       return JSON.stringify(this.voterDecisions);
   }
 
-  timeLeft(){
+  updateTimeLeft(){
     let endTime = this.ballot.config.Ballot.EndTimeSeconds;
     let now = Math.floor(new Date().getTime()/1000);
     let timeLeft = Math.max(0, endTime - now);
@@ -121,7 +154,7 @@ export class VoterBallotPage {
       this.timesUp = true;
       //TODO: prompt with "time's up"
     }
-    return this.toHHMMSS(timeLeft);
+    this.timeLeft = this.toHHMMSS(timeLeft);
   }
 
   toHHMMSS(secs) {
