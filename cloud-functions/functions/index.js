@@ -1,8 +1,8 @@
 let functions = require('firebase-functions');
 const admin = require('firebase-admin');
 let firebase = admin.initializeApp(functions.config().firebase);
-let FABRIC_API='104.198.240.210';
-let API_KEY = 'AIzaSyAUWhZClYHv8p6cdREZ-YJS_IS7njmXgzo';
+const FABRIC_API = functions.config().netvote.apihost;
+const API_KEY = functions.config().netvote.apikey;
 let http = require('http');
 
 
