@@ -131,7 +131,8 @@ exports.castVote = functions.database.ref('/votes/{userId}/{ballotId}/{txId}/vot
                 let updates = {};
                 updates[txObject.txRefPath + '/apiResponse'] = responseJson;
                 updates[txObject.txRefPath + '/status'] = "error";
-                updates["/votes/" + userId + "/" + event.params.ballotId + "/" + event.params.txId] = { status: "error", statusMessage: responseJson.Message};
+                updates["/votes/" + userId + "/" + event.params.ballotId + "/" + event.params.txId + "/status"] = "error";
+                updates["/votes/" + userId + "/" + event.params.ballotId + "/" + event.params.txId + "/message"] = responseJson.Message;
                 return firebase.database().ref().update(updates);
             });
         }
