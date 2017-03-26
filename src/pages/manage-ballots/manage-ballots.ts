@@ -23,6 +23,12 @@ export class ManageBallotsPage {
               public menuCtrl: MenuController, public toastCtrl: ToastController, public cdr: ChangeDetectorRef) {}
 
 
+  private detectChanges(){
+    try{
+      this.cdr.detectChanges();
+    }catch(e){}
+  }
+
   ionViewDidLoad() {
     this.menuCtrl.enable(true);
     this.menuCtrl.swipeEnable(true);
@@ -36,7 +42,7 @@ export class ManageBallotsPage {
 
     ballotsRef.on('child_added', (b) => {
       this.ballots.push(this.toUIBallot(b))
-      this.cdr.detectChanges();
+      this.detectChanges()
     });
 
     ballotsRef.on('child_changed',(b) => {
@@ -50,7 +56,7 @@ export class ManageBallotsPage {
         }
       });
       this.ballots = tmpBallots;
-      this.cdr.detectChanges();
+      this.detectChanges()
     });
 
     ballotsRef.on('child_removed', (b) => {
@@ -60,7 +66,7 @@ export class ManageBallotsPage {
           return;
         }
       }
-      this.cdr.detectChanges();
+      this.detectChanges()
     });
 
   }

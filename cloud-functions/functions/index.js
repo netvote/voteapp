@@ -7,7 +7,7 @@ let http = require('http');
 let uuid = require("uuid/v4");
 
 // all fabric transactions have a callback firebase object
-function buildTXObject(userId, functionName, triggerRefPath, triggerObject, triggerObjectId, payload){
+function buildTXObject(userId, functionName, triggerRefPath, triggerObject, triggerObjectId, payload, ballotId){
     let txId = uuid();
     let obj = {
         txId: txId,
@@ -22,7 +22,8 @@ function buildTXObject(userId, functionName, triggerRefPath, triggerObject, trig
         payload: payload,
         txRefPath: "/fabric-tx/"+functionName+"/"+txId,
         status: "pending",
-        apiResponse: {}
+        apiResponse: {},
+        ballotId: ballotId
     };
     firebase.database().ref(obj.txRefPath).set(obj);
     return obj;
@@ -52,7 +53,7 @@ exports.saveBallot = functions.database.ref('/ballot-configs/{ballotId}')
                 let triggerRefPath = "/ballot-configs/"+ballotId;
                 let triggerObject = event.data.val();
                 let payload = evtPayload.config;
-                let txObject = buildTXObject(userId, functionName, triggerRefPath, triggerObject, ballotId, payload);
+                let txObject = buildTXObject(userId, functionName, triggerRefPath, triggerObject, ballotId, payload, ballotId);
                 if(!payload.Ballot.Attributes){
                     payload.Ballot.Attributes = {}
                 }
@@ -121,7 +122,7 @@ exports.castVote = functions.database.ref('/votes/{userId}/{ballotId}/{txId}/vot
             let payload = event.data.val();
             payload["VoterId"] = userId;
 
-            let txObject = buildTXObject(userId, functionName, triggerRefPath, triggerObject, event.params.txId, payload);
+            let txObject = buildTXObject(userId, functionName, triggerRefPath, triggerObject, event.params.txId, payload, event.params.ballotId);
 
             return postNetvoteAPI("castVote", {payload: payload, txRefPath: txObject.txRefPath}).then((result) => {
                 let updates = {};
@@ -147,7 +148,13 @@ exports.commitVote = functions.database.ref('/fabric-tx/cast_vote/{txId}').onWri
         //TODO: NOTHING HERE
     }else if(event.data.val().status === "success") {
         let txObject = event.data.val();
-        return firebase.database().ref(txObject.triggerObject.refPath).parent.update({ status: "success" })
+        //TODO: update vote history
+        //mark as successful
+        return firebase.database().ref(txObject.triggerObject.refPath).parent.update({ status: "success" }).then(()=>{
+            //remove from the user's list of ballots
+            console.log("removing: /voter-ballot-lists/"+txObject.uid+"/active/"+txObject.triggerObject.id);
+            return firebase.database().ref("/voter-ballot-lists/"+txObject.uid+"/active/"+txObject.ballotId).remove();
+        })
     }else{
         console.error("commitVote status was not success: "+JSON.stringify(event.data.val()));
     }

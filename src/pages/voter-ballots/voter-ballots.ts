@@ -18,6 +18,7 @@ export class VoterBallotsPage {
 
   private ballots: any = [];
   private userId: string;
+  private activeBallotListRef: string;
   private ballotId: string = null;
   private ballotMap: any = {}
 
@@ -31,8 +32,8 @@ export class VoterBallotsPage {
       this.getBallot(ballotId).then((ballot) => {
         //TODO: if I can add the ballot
         //TODO: already voted?
-        console.log("adding ballot: /voter-ballot-lists/" + this.userId + '/' + ballotId);
-        firebase.database().ref('/voter-ballot-lists/' + this.userId).child(ballotId).set(true).catch((e) =>{});
+        console.log("adding ballot: "+this.activeBallotListRef);
+        firebase.database().ref(this.activeBallotListRef).child(ballotId).set(true).catch((e) =>{});
       });
     }
   }
@@ -47,7 +48,7 @@ export class VoterBallotsPage {
   }
 
   private removeBallot(ballotId){
-    firebase.database().ref('/voter-ballot-lists/' + this.userId).child(ballotId).remove();
+    firebase.database().ref(this.activeBallotListRef).child(ballotId).remove();
   }
 
   isOpen(key){
@@ -77,6 +78,12 @@ export class VoterBallotsPage {
     }
   }
 
+  private detectChanges(){
+    try{
+      this.cdr.detectChanges();
+    }catch(e){}
+  }
+
   ionViewDidLoad() {
 
     this.menuCtrl.enable(true);
@@ -89,7 +96,9 @@ export class VoterBallotsPage {
 
     this.addBallot(this.ballotId);
 
-    let ballotsRef = firebase.database().ref('/voter-ballot-lists/' + userId).orderByKey();
+    this.activeBallotListRef = '/voter-ballot-lists/' + userId + '/active';
+
+    let ballotsRef = firebase.database().ref(this.activeBallotListRef).orderByKey();
 
     ballotsRef.on('child_added', (b) => {
       console.log("child_added: "+b.key);
@@ -99,7 +108,7 @@ export class VoterBallotsPage {
           this.ballots.push(this.toUIBallot(ballot));
         }
       });
-      this.cdr.detectChanges()
+      this.detectChanges();
     });
 
     ballotsRef.on('child_changed',(b) => {
@@ -115,7 +124,7 @@ export class VoterBallotsPage {
         }
       });
       this.ballots = tmpBallots;
-      this.cdr.detectChanges();
+      this.detectChanges();
     });
 
     ballotsRef.on('child_removed', (b) => {
@@ -123,14 +132,13 @@ export class VoterBallotsPage {
       for(let i=0; i<this.ballots.length; i++){
         if(this.ballots[i].key == b.key){
           this.ballots.splice( i, 1 );
-          this.cdr.detectChanges();
+          this.detectChanges();
           return;
         }
       }
-      this.cdr.detectChanges()
     });
 
-    this.cdr.detectChanges()
+    this.detectChanges();
   }
 
   confirmRemove(ballotId){
