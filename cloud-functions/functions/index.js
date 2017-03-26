@@ -130,7 +130,8 @@ exports.castVote = functions.database.ref('/votes/{userId}/{ballotId}/{txId}/vot
             }).catch((responseJson) => {
                 let updates = {};
                 updates[txObject.txRefPath + '/apiResponse'] = responseJson;
-                updates[txObject.triggerObject.refPath].parent.update({ status: "error", statusMessage: responseJson.Message});
+                updates[txObject.txRefPath + '/status'] = "error";
+                updates["/votes/" + userId + "/" + event.params.ballotId + "/" + event.params.txId] = { status: "error", statusMessage: responseJson.Message};
                 return firebase.database().ref().update(updates);
             });
         }
