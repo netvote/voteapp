@@ -1,0 +1,33 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title color="light">
+            Submitting Vote
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-list>
+        <ion-item>
+            <ion-spinner [hidden]="submitted || error || success" item-left color="primary" name="crescent"></ion-spinner>
+            <ion-icon [hidden]="!submitted" name="checkmark-circle" color="primary" item-left></ion-icon>
+            {{ submittingText }}
+        </ion-item>
+        <ion-item>
+            <ion-icon [hidden]="!error" name="alert" color="danger" item-left></ion-icon>
+            <ion-spinner [hidden]="validated || error || success" item-left color="primary" name="crescent"></ion-spinner>
+            <ion-icon [hidden]="!validated" name="checkmark-circle" color="primary" item-left></ion-icon>
+            {{ validatingText }}
+        </ion-item>
+        <ion-item [hidden]="error">
+            <ion-spinner [hidden]="secured || error || success" item-left color="primary" name="crescent"></ion-spinner>
+            <ion-icon [hidden]="!secured" name="checkmark-circle" color="primary" item-left></ion-icon>
+            {{ securingText }}
+        </ion-item>
+    </ion-list>
+
+</ion-content>
+
+<ion-footer>
+    <button block [hidden]="!(success)" (click)="exitVoting()" ion-button>Close</button>
+    <button block [hidden]="!(error)" (click)="dismiss()" ion-button>Return</button>
+</ion-footer>

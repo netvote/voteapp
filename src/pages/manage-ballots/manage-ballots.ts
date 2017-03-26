@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import {Component, ChangeDetectorRef} from '@angular/core';
 import {MenuController, ActionSheetController, ToastController, NavController} from 'ionic-angular';
 import * as firebase from 'firebase';
 import {Clipboard} from "ionic-native";
@@ -20,7 +20,7 @@ export class ManageBallotsPage {
   private userId: string;
 
   constructor(public navCtrl: NavController, public actionSheetCtrl: ActionSheetController,
-              public menuCtrl: MenuController, public cdr: ChangeDetectorRef, public toastCtrl: ToastController) {}
+              public menuCtrl: MenuController, public toastCtrl: ToastController, public cdr: ChangeDetectorRef) {}
 
 
   ionViewDidLoad() {
@@ -60,6 +60,7 @@ export class ManageBallotsPage {
           return;
         }
       }
+      this.cdr.detectChanges();
     });
 
   }
@@ -147,12 +148,6 @@ export class ManageBallotsPage {
   private deleteBallot(ballotKey){
     let ballotsRef = firebase.database().ref('/ballot-config-lists/' + this.userId + '/' + ballotKey);
     ballotsRef.remove((r) => {});
-
-    let ballotRef = firebase.database().ref('/ballot-configs/' + ballotKey);
-    ballotRef.remove((r) => {});
-
-    let resultsRef = firebase.database().ref('/ballot-results/' + ballotKey);
-    resultsRef.remove((r) => {});
   }
 
   private shareBallot(shareBallot){
@@ -246,7 +241,7 @@ export class ManageBallotsPage {
         "Description": "Help us pick your beer."+(has2Factor? " This requires 2FA." : ""),
         "Requires2FA": has2Factor,
         "StartTimeSeconds": StartTime,
-        "EndTimeSeconds": (StartTime + 3600),
+        "EndTimeSeconds": (StartTime + 7200),
         "Attributes":{
           "Image": "https://rafflecreator.s3.amazonaws.com/2b3fc509-82bb-4d03-8d47-cfe0bd0bba3c.jpg"
         }

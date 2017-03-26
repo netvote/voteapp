@@ -13,8 +13,9 @@
 <ion-content padding>
 
   <ion-card item-content *ngFor="let ballot of ballots" [hidden]="ballots.length == 0">
+    <img src="{{ ballot.val.config.Ballot.Attributes.Image }}" [hidden]="ballot.val.config.Ballot.Attributes.Image == null || ballot.val.config.Ballot.Attributes.Image == ''"/>
+
     <ion-card-content>
-      <img src="{{ ballot.val.config.Ballot.Attributes.Image }}" [hidden]="ballot.val.config.Ballot.Attributes.Image == null || ballot.val.config.Ballot.Attributes.Image == ''"/>
 
       <ion-card-title>
         {{ ballot.val.config.Ballot.Name }}
@@ -28,17 +29,17 @@
     </ion-card-content>
     <ion-row no-padding>
       <ion-col>
-        <button [hidden]="!(voteTimers[ballot.key].state == 'OPEN')" (click)="openBallot(ballot)" ion-button clear small block icon-left>
+        <button [hidden]="!(isOpen(ballot.key))" (click)="openBallot(ballot)" ion-button clear small block icon-left>
           <ion-icon color="primary" name='checkmark-circle'></ion-icon>
-          Vote Now ({{ voteTimers[ballot.key].timeLeftText }})
+          Vote Now
         </button>
-        <button [hidden]="!(voteTimers[ballot.key].state == 'FUTURE')" ion-button clear small block icon-left>
+        <button [hidden]="!(isFuture(ballot.key))" ion-button clear small block icon-left>
           <ion-icon color="dark" name='time'></ion-icon>
-          <p>Poll opens in {{ voteTimers[ballot.key].timeLeftText }}</p>
+          <p>Not open yet</p>
         </button>
-        <button [hidden]="!(voteTimers[ballot.key].state == 'CLOSED')" ion-button clear small block icon-left>
+        <button [hidden]="!(isClosed(ballot.key) == 'CLOSED')" ion-button clear small block icon-left>
           <ion-icon color="dark" name='time'></ion-icon>
-          <p>Poll is now closed</p>
+          <p>Poll is closed</p>
         </button>
       </ion-col>
       <ion-col>

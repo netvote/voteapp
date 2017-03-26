@@ -17,6 +17,7 @@ import {ManageBallotsPage} from "../pages/manage-ballots/manage-ballots";
 import {VoterBallotsPage} from "../pages/voter-ballots/voter-ballots";
 import {VoterBallotPage} from "../pages/voter-ballot/voter-ballot";
 import {MoreInfoModalPage} from "../pages/voter-ballot/voter-ballot-more-info";
+import {VoterBallotStatusPage} from "../pages/voter-ballot/voter-ballot-status";
 
 firebase.initializeApp(Login.firebaseConfig);
 
@@ -30,7 +31,8 @@ firebase.initializeApp(Login.firebaseConfig);
     ManageBallotsPage,
     VoterBallotsPage,
     VoterBallotPage,
-    MoreInfoModalPage
+    MoreInfoModalPage,
+    VoterBallotStatusPage
   ],
   imports: [
     IonicModule.forRoot(MyApp, {
@@ -48,7 +50,8 @@ firebase.initializeApp(Login.firebaseConfig);
     ManageBallotsPage,
     VoterBallotsPage,
     VoterBallotPage,
-    MoreInfoModalPage
+    MoreInfoModalPage,
+    VoterBallotStatusPage
   ],
   providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler }, LoginProvider, LogoutProvider, LoadingProvider, AlertProvider, ImageProvider]
 })

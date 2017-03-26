@@ -1,4 +1,4 @@
-import {Component, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
+import {Component, ChangeDetectorRef} from '@angular/core';
 import {NavParams, MenuController, ActionSheetController, AlertController, NavController} from 'ionic-angular';
 import * as firebase from 'firebase';
 import {VoterBallotPage} from "../voter-ballot/voter-ballot";
@@ -19,8 +19,7 @@ export class VoterBallotsPage {
   private ballots: any = [];
   private userId: string;
   private ballotId: string = null;
-  private voteTimers: any = {};
-  private refreshInterval: any = null;
+  private ballotMap: any = {}
 
   constructor(public navCtrl: NavController, public actionSheetCtrl: ActionSheetController, public alertCtrl: AlertController, public menuCtrl: MenuController, public navParam: NavParams, public cdr: ChangeDetectorRef) {
     this.ballotId = this.navParam.get("ballotId");
@@ -38,22 +37,6 @@ export class VoterBallotsPage {
     }
   }
 
-  timeLeft(secondsTime){
-    let now = Math.floor(new Date().getTime()/1000);
-    return this.toHHMMSS((secondsTime - now));
-  }
-
-  toHHMMSS(secs) {
-    let sec_num = parseInt(secs, 10);
-    let hours = Math.floor(sec_num / 3600) % 24;
-    let minutes = Math.floor(sec_num / 60) % 60;
-    let seconds = sec_num % 60;
-    return [hours, minutes, seconds]
-        .map(v => v < 10 ? "0" + v : v)
-        .filter((v, i) => v !== "00" || i > 0)
-        .join(":")
-  };
-
   private getBallot(ballotId){
     console.log("getting ballot-config: "+ballotId);
     return firebase.database().ref('/ballot-configs/' + ballotId).once("value");
@@ -67,49 +50,32 @@ export class VoterBallotsPage {
     firebase.database().ref('/voter-ballot-lists/' + this.userId).child(ballotId).remove();
   }
 
-  private addTimer(ballot){
-      let ballotConfig = ballot.val().config.Ballot;
-      this.voteTimers[ballot.key] = {
-          StartTimeSeconds: ballotConfig.StartTimeSeconds,
-          EndTimeSeconds: ballotConfig.EndTimeSeconds
-      }
+  isOpen(key){
+    let now = new Date().getTime();
+    return this.ballotMap[key].startTime.getTime() <= now && this.ballotMap[key].endTime.getTime() > now
   }
 
-  private updateTimes(){
-      let now = Math.floor(new Date().getTime()/1000);
-      for(let ballotId in this.voteTimers){
-          if(this.voteTimers.hasOwnProperty(ballotId)){
-              let timeConfig = this.voteTimers[ballotId];
-              if(now < timeConfig.StartTimeSeconds){
-                  this.voteTimers[ballotId].state = "FUTURE";
-                  this.voteTimers[ballotId].timeLeftText = this.timeLeft(timeConfig.StartTimeSeconds);
-              }else if(now < timeConfig.EndTimeSeconds){
-                  this.voteTimers[ballotId].state = "OPEN";
-                  this.voteTimers[ballotId].timeLeftText = this.timeLeft(timeConfig.EndTimeSeconds);
-              }else{
-                  this.voteTimers[ballotId].state = "CLOSED";
-              }
-          }
-      }
+  isClosed(key){
+    let now = new Date().getTime();
+    return this.ballotMap[key].endTime.getTime() < now
   }
 
-  private startTimer(){
-      this.refreshInterval = setInterval(()=>{
-          this.updateTimes()
-      }, 500)
+  isFuture(key){
+    let now = new Date().getTime();
+    return this.ballotMap[key].startTime.getTime() > now
   }
 
-  private stopTimer(){
-      clearInterval(this.refreshInterval);
-  }
+  private addBallotToMap(ballot){
+    let startTime = new Date(ballot.val().config.Ballot.StartTimeSeconds * 1000);
+    let endTime = new Date(ballot.val().config.Ballot.EndTimeSeconds * 1000);
 
-    ionViewDidEnter(){
-        this.startTimer();
+    this.ballotMap[ballot.key] = {
+      startTime: startTime,
+      endTime: endTime
+    //  startTimeText: dateFormat(startTime, "mm/dd/yyyy HH:MM:SS" ),
+     // endTimeText: dateFormat(endTime, "mm/dd/yyyy HH:MM:SS" )
     }
-
-    ionViewWillLeave(){
-        this.stopTimer();
-    }
+  }
 
   ionViewDidLoad() {
 
@@ -129,10 +95,11 @@ export class VoterBallotsPage {
       console.log("child_added: "+b.key);
       this.getBallot(b.key).then((ballot) => {
         if(this.exists(ballot)){
-          this.addTimer(ballot);
+          this.addBallotToMap(ballot);
           this.ballots.push(this.toUIBallot(ballot));
         }
       });
+      this.cdr.detectChanges()
     });
 
     ballotsRef.on('child_changed',(b) => {
@@ -160,8 +127,10 @@ export class VoterBallotsPage {
           return;
         }
       }
+      this.cdr.detectChanges()
     });
 
+    this.cdr.detectChanges()
   }
 
   confirmRemove(ballotId){

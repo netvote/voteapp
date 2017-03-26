@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {NavController, NavParams, ModalController} from 'ionic-angular';
 import {MoreInfoModalPage} from "./voter-ballot-more-info";
 import * as firebase from 'firebase';
+import {VoterBallotStatusPage} from "./voter-ballot-status";
 
 /*
   Generated class for the VoterBallot page.
@@ -42,11 +43,11 @@ export class VoterBallotPage {
   }
 
   ionViewDidEnter(){
-      this.startTimer();
+     // this.startTimer();
   }
 
   ionViewWillLeave(){
-      this.stopTimer();
+     // this.stopTimer();
   }
 
   ionViewDidLoad() {
@@ -90,15 +91,19 @@ export class VoterBallotPage {
           this.processing = true;
 
           let vote = {
+              BallotId: this.ballot.config.Ballot.Id,
               Decisions: this.buildVoteDecisions()
           };
           console.log(JSON.stringify(this.voterDecisions));
           console.log(JSON.stringify(vote));
-          let ref = firebase.database().ref('/votes/' + this.userId + '/' + this.ballotId).push();
+          let voteRef = '/votes/' + this.userId + '/' + this.ballotId;
+
+          let ref = firebase.database().ref(voteRef).push();
           ref.set({
               "vote": vote
           }).then(() => {
-              //wait for success
+              this.modalCtrl.create(VoterBallotStatusPage, { voteRef: voteRef+"/"+ref.key }).present()
+              this.processing = false;
           });
       }
   }
