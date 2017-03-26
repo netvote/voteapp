@@ -148,6 +148,8 @@ exports.commitVote = functions.database.ref('/fabric-tx/cast_vote/{txId}').onWri
     }else if(event.data.val().status === "success") {
         let txObject = event.data.val();
         return firebase.database().ref(txObject.triggerObject.refPath).parent.update({ status: "success" })
+    }else{
+        console.error("commitVote status was not success: "+JSON.stringify(event.data.val()));
     }
 });
 
