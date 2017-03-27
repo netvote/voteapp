@@ -84,6 +84,14 @@ export class VoterBallotsPage {
     }catch(e){}
   }
 
+  ionViewDidEnter(){
+    this.menuCtrl.enable(true);
+    this.menuCtrl.swipeEnable(true);
+    this.menuCtrl.close();
+    this.detectChanges();
+
+  }
+
   ionViewDidLoad() {
 
     this.menuCtrl.enable(true);

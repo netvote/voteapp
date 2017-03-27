@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {Platform, Nav, MenuController, AlertController} from 'ionic-angular';
 import { StatusBar, Splashscreen, Deeplinks } from 'ionic-native';
 
@@ -20,7 +20,7 @@ export class MyApp {
   private pages: Array<{ title: string, icon: string, component: any }>
   private user: any;
 
-  constructor(platform: Platform, public angularfire: AngularFire, public menuCtrl: MenuController, public alertCtrl: AlertController, public logoutProvider: LogoutProvider) {
+  constructor(platform: Platform, public angularfire: AngularFire, public menuCtrl: MenuController, public alertCtrl: AlertController, public logoutProvider: LogoutProvider, public cdr: ChangeDetectorRef) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -48,19 +48,24 @@ export class MyApp {
       { title: 'Voting', icon: 'checkmark-circle', component: VoterBallotsPage}
     ];
 
-    // Check if user is logged in and authenticated on Firebase.
+  }
+
+  private detectChanges(){
+    try{
+      this.cdr.detectChanges();
+    }catch(e){}
+  }
+
+  ngOnInit() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // Set user information on the sidemenu based on userData created on database.
         this.angularfire.database.object('accounts/' + firebase.auth().currentUser.uid).subscribe((user) => {
           this.user = user;
+          this.detectChanges()
         });
       }
     });
-  }
-
-  ngOnInit() {
-
   }
 
 

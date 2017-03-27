@@ -8,6 +8,7 @@
 import { VerificationPage } from './pages/verification/verification';
 import { TrialPage } from './pages/trial/trial';
 import {VoterBallotsPage} from "./pages/voter-ballots/voter-ballots";
+import {ManageBallotsPage} from "./pages/manage-ballots/manage-ballots";
 
 export namespace Login {
   // Get your Firebase app's config on your Firebase console. "Add Firebase to your web app".

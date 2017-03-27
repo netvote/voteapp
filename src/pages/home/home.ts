@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import { NavController, AlertController, NavParams, App, MenuController } from 'ionic-angular';
 import { LogoutProvider } from '../../providers/logout';
 import { LoadingProvider } from '../../providers/loading';
@@ -25,7 +25,7 @@ export class HomePage {
   // The user can also opt for the deletion of their account, and finally logout.
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public navParams: NavParams, public app: App,
     public logoutProvider: LogoutProvider, public loadingProvider: LoadingProvider, public imageProvider: ImageProvider,
-    public angularfire: AngularFire, public alertProvider: AlertProvider, public menuCtrl: MenuController) {
+    public angularfire: AngularFire, public alertProvider: AlertProvider, public menuCtrl: MenuController, public cdr: ChangeDetectorRef) {
     this.logoutProvider.setApp(this.app);
   }
 

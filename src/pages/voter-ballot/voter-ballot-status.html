@@ -24,10 +24,6 @@
             {{ securingText }}
         </ion-item>
     </ion-list>
-
-</ion-content>
-
-<ion-footer>
     <button block [hidden]="!(success)" (click)="exitVoting()" ion-button>Close</button>
     <button block [hidden]="!(error)" (click)="dismiss()" ion-button>Return</button>
-</ion-footer>
+</ion-content>
